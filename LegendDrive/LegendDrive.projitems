@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>{ACCD3239-FE3A-4539-9217-F9DCA2AF9760}</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>LegendDrive</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)App.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewExtension.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\GlobalModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\BooleanToColorConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Counters\DistanceCounter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Counters\AvgSpeedCounter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Counters\BaseBindingObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\CounterToStringConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Counters\AvgSpeedKmhCounter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\FuncValueConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\FuncBinding.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MainPage\LeftPanelBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MainPage\RightPanelBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MainPage\IViewBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MainPage\UIConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MainPage\MainPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Counters\BaseCounter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Counters\CurrentTimeCounter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Counters\TimerCounter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Counters\RemainingDistanceCounter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\GlobalCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\ObservableRangeCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\Numpad\NumpadModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\Numpad\NumpadConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\Numpad\NumpadCommands.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\Numpad\NumpadButton.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\Race\Race.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\Race\RaceSegment.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\Race\TurnInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Counters\TriggeredFuncCounter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MainPage\CountersPanelBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MainPage\CountersPanelBuilderHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Counters\Interfaces\ILocationProcessor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Counters\Interfaces\IRaceCounter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Counters\Interfaces\IDifferenceCounter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Counters\Interfaces\ITriggeredFuncCounter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\LocationData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Counters\RemainingTimeCounter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Counters\Interfaces\IHistoricalCounter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Counters\BaseDifferenceCounter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Counters\DistanceCounter2.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Counters\DistanceCounter3.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Model\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Converters\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Counters\" />
+    <Folder Include="$(MSBuildThisFileDirectory)MainPage\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Collections\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Model\Numpad\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Model\Race\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Counters\Interfaces\" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!--<resources>
+  <color name="black">#000000</color>
+  <color name="blue">#888888</color>
+  <color name="white">#cc0000</color>
+  <color name="gray">#777777</color>
+</resources>-->
+
+<resources>
+  <color name="primary">#9E9E9E</color>
+  <color name="primaryDark">#616161</color>
+  <color name="primaryLight">#F5F5F5</color>
+  <color name="accent">#8BC34A</color>
+  <color name="primaryText">#212121</color>
+  <color name="secondaryText">#757575</color>
+  <color name="icons">#212121</color>
+  <color name="divider">#BDBDBD</color>
+  <color name="window_background">#000000</color>
+  <color name="buttonColor">#243F23</color>
+  <color name="buttonColorLight">#335F30</color>
+</resources>
