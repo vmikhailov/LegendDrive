@@ -1,8 +1,9 @@
 using System;
 using System.ComponentModel;
 using System.Globalization;
+using LegendDrive.Counters.Interfaces;
 
-namespace LegendDrive
+namespace LegendDrive.Counters
 {
 	public abstract class BaseDifferenceCounter<T> : BaseCounter<T>, IDifferenceCounter<T>
 	{

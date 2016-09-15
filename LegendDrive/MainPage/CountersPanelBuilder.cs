@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LegendDrive.Counters.Interfaces;
+using LegendDrive.Model;
 using Xamarin.Forms;
 
 namespace LegendDrive
@@ -23,7 +25,7 @@ namespace LegendDrive
 			var grid = new Grid();
 			grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 			grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(0) });
-			foreach (var c in model.Counters.Values)
+			foreach (var c in model.CountersGroup.Counters.Values)
 			{
 				//var rowCount = (c.Count - 1) / 8 + 1;
 				grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
@@ -34,7 +36,7 @@ namespace LegendDrive
 
 			int i = 0;
 			grid.Children.Add(BuildSplitter(), 0, i++);
-			foreach (var c in model.Counters.Values)
+			foreach (var c in model.CountersGroup.Counters.Values)
 			{
 				grid.Children.Add(BuildCountersPanel(c), 0, i++);
 				grid.Children.Add(BuildSplitter(), 0, i++);
@@ -85,9 +87,7 @@ namespace LegendDrive
 				TextColor = Color.White,
 				HorizontalOptions = LayoutOptions.Center,
 				VerticalOptions = LayoutOptions.Center,
-				//Margin = new Thickness(0,0,20,0),
-				//BackgroundColor = Color.Red,
-				//FontAttributes = FontAttributes.Bold,
+				Margin = new Thickness(0,10,0,0),
 				FontFamily = "OpenSans",
 				BindingContext = counter
 			};

@@ -35,9 +35,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Model\Numpad\NumpadConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Model\Numpad\NumpadCommands.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Model\Numpad\NumpadButton.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Model\Race\Race.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Model\Race\RaceSegment.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Model\Race\TurnInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\RaceModel\Race.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\RaceModel\RaceSegment.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\RaceModel\TurnInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Counters\TriggeredFuncCounter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MainPage\CountersPanelBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MainPage\CountersPanelBuilderHelper.cs" />
@@ -47,10 +47,15 @@
     <Compile Include="$(MSBuildThisFileDirectory)Counters\Interfaces\ITriggeredFuncCounter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Model\LocationData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Counters\RemainingTimeCounter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Counters\Interfaces\IHistoricalCounter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Counters\Interfaces\ISupportHistory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Counters\BaseDifferenceCounter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Counters\DistanceCounter2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Counters\DistanceCounter3.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\CountersGroup.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Persistance\ISupportStatePersistance.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Persistance\StatePersistanceHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\Simulator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\NullableExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Model\" />
@@ -59,7 +64,8 @@
     <Folder Include="$(MSBuildThisFileDirectory)MainPage\" />
     <Folder Include="$(MSBuildThisFileDirectory)Collections\" />
     <Folder Include="$(MSBuildThisFileDirectory)Model\Numpad\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Model\Race\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Model\RaceModel\" />
     <Folder Include="$(MSBuildThisFileDirectory)Counters\Interfaces\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Persistance\" />
   </ItemGroup>
 </Project>

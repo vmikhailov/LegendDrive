@@ -2,8 +2,9 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
+using LegendDrive.Counters.Interfaces;
 
-namespace LegendDrive
+namespace LegendDrive.Counters
 {
 	[DebuggerDisplay("{Name} = {ValueString}")]
 	public abstract class BaseCounter<T> : BaseBindingObject, IRaceCounter<T>, IDisposable
@@ -114,17 +115,17 @@ namespace LegendDrive
 			}
 		}
 
-		public bool IsImportant
+		public virtual bool IsImportant
 		{
 			get { return _important; }
 		}
 
-		public bool IsCritical
+		public virtual bool IsCritical
 		{
 			get { return _critical; }
 		}
 
-		public bool IsRunning
+		public virtual bool IsRunning
 		{
 			get { return _started; }
 		}

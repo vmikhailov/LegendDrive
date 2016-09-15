@@ -99,12 +99,17 @@
     <Reference Include="Polenter.SharpSerializer.PCL">
       <HintPath>..\packages\SharpSerializer.PCL.2.18.7\lib\portable-net45+sl50+win+wpa81+wp80\Polenter.SharpSerializer.PCL.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="GPXLogWriter.cs" />
+    <Compile Include="Services\LocationService.cs" />
+    <Compile Include="Services\ModalDialogService.cs" />
+    <Compile Include="Services\GPSLoggingService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -127,6 +132,9 @@
       <Project>{51FFD7F7-CAFE-446A-AE9D-50999FFF4E49}</Project>
       <Name>GPXLib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
   <Import Project="..\LegendDrive\LegendDrive.projitems" Label="Shared" Condition="Exists('..\LegendDrive\LegendDrive.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

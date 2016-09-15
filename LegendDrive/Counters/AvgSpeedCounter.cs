@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using LegendDrive.Counters.Interfaces;
+using LegendDrive.Model;
+using Newtonsoft.Json.Linq;
 
-namespace LegendDrive
+namespace LegendDrive.Counters
 {
 	public class AvgSpeedCounter : BaseCounter<double>, ILocationProcessor
 	{
@@ -22,10 +25,9 @@ namespace LegendDrive
 		public AvgSpeedCounter(string name, int duration)
 			:base(name)
 		{
-			DurationOfCalculation = duration * 1000;
+			DurationOfCalculation = duration;
 			_samples = new LinkedList<LocationData>();
 			_timer = new Timer(x => FireOnValueChanged(), null, 0, 100);
-			//_samples.AddLast(new SpeedSample() { Speed = 100, Time = DateTime.Now.Ticks });
 		}
 
 		public long DurationOfCalculation
@@ -46,6 +48,7 @@ namespace LegendDrive
 			{
 				EnsureInitialized();
 				return _value;
+				//return _samples.Count/3.6;
 			}
 		}
 
@@ -53,20 +56,26 @@ namespace LegendDrive
 		{
 			lock(this)
 			{
-				long duration = 0;
+				double duration = 0;
 				double distance = 0;
 
 				//going from last to first
 				var node = _samples.Last;
-				var lastSampleTime = DateTime.Now;
+				var t1 = DateTime.Now;
+				//...*(v1)....*(v2)....*(v3)....now
+				//v(now-t3) == 0
+				//v(t3-t2) == v3
+				//v(t2-t1) == v2
 
+				double v = 0;
 				while (duration < DurationOfCalculation && node != null)
 				{
-					var thisSampleTime = node.Value.Time;
-					var dt = (long)(lastSampleTime - thisSampleTime).TotalMilliseconds;
-					distance += node.Value.Speed/1000d * dt;
+					var t0 = node.Value.Time;
+					var dt = (long)(t1 - t0).TotalSeconds;
+					distance += v * dt;
 					duration += dt;
-					lastSampleTime = thisSampleTime;
+					t1 = t0;
+					v = node.Value.Speed;
 					node = node.Previous;
 				}
 
@@ -80,7 +89,7 @@ namespace LegendDrive
 					}
 				}
 
-				_value = duration != 0 ? distance / (duration / 1000d) : 0;
+				_value = duration > 0 ? distance / duration : 0;
 			}
 		}
 
@@ -97,6 +106,7 @@ namespace LegendDrive
 
 		public virtual void SetLocation(LocationData location)
 		{
+			if (!location.GpsOn) return;
 			if (IsRunning)
 			{
 				lock(this)

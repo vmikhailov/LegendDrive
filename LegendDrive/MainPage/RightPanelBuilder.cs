@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using LegendDrive.Model;
+using LegendDrive.Model.RaceModel;
 using Xamarin.Forms;
 
 namespace LegendDrive
@@ -128,11 +130,13 @@ namespace LegendDrive
 			{
 				if (e.Action == NotifyCollectionChangedAction.Add)
 				{
-					var items = e.NewItems[0] as IEnumerable<RaceSegment>;
-					var x = items.LastOrDefault();
-					if (x != null)
+					var ni = e.NewItems;
+					var item = ni.OfType<RaceSegment>()
+					              .Union(ni.OfType<IEnumerable<RaceSegment>>().SelectMany(y => y))
+					              .LastOrDefault();
+					if (item != null)
 					{
-						lv.ScrollTo(x, ScrollToPosition.MakeVisible, false);
+						lv.ScrollTo(item, ScrollToPosition.MakeVisible, false);
 					}
 				}
 			};

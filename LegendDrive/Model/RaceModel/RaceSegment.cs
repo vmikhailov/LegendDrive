@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using LegendDrive.Counters;
+using LegendDrive.Persistance;
+using Newtonsoft.Json.Linq;
 
-namespace LegendDrive
+namespace LegendDrive.Model.RaceModel
 {
-	public class RaceSegment : BaseBindingObject
+	public class RaceSegment : BaseBindingObject, ISupportStatePersistance 
 	{
 		public RaceSegment()
 		{
@@ -138,6 +141,25 @@ namespace LegendDrive
 		{
 			str = str.Trim('.');
 			return Double.Parse(str, CultureInfo.InvariantCulture);
+		}
+
+
+		public JObject GetState()
+		{
+			var obj = new JObject();
+			obj.AddValue(nameof(No), No);
+			obj.AddValue(nameof(Distance), Distance);
+			obj.AddValue(nameof(Speed), Speed);
+			obj.AddValue(nameof(Timeout), Timeout);
+			return obj;
+		}
+
+		public void LoadState(JObject obj)
+		{
+			No = obj.GetValue<int>(nameof(No));
+			Distance = obj.GetValue<double>(nameof(Distance));
+			Speed = obj.GetValue<double>(nameof(Speed));
+			Timeout = obj.GetValue<TimeSpan>(nameof(Timeout));
 		}
 	}
 }

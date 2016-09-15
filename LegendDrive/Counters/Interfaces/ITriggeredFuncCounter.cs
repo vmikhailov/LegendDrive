@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace LegendDrive
+namespace LegendDrive.Counters.Interfaces
 {
 	public interface ITriggeredFuncCounter<TObject, TResult> : IRaceCounter<TResult> where TObject : INotifyPropertyChanged
 	{

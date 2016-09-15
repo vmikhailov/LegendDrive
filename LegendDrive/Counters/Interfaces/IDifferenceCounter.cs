@@ -1,4 +1,4 @@
-﻿namespace LegendDrive
+﻿namespace LegendDrive.Counters.Interfaces
 {
 	public interface IDifferenceCounter<T>
 	{

@@ -1,6 +1,6 @@
 using System;
 
-namespace LegendDrive
+namespace LegendDrive.Counters
 {
 	public class AvgSpeedKmhCounter : AvgSpeedCounter
 	{

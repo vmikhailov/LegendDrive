@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
+using LegendDrive.Counters.Interfaces;
 
-namespace LegendDrive
+namespace LegendDrive.Counters
 {
 	public class TriggeredFuncCounter<TObject, TResult> : BaseCounter<TResult>, ITriggeredFuncCounter<TObject, TResult> 
 		where TObject : INotifyPropertyChanged

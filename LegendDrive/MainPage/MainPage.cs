@@ -1,3 +1,4 @@
+using LegendDrive.Model;
 using Xamarin.Forms;
 
 namespace LegendDrive
@@ -21,13 +22,26 @@ namespace LegendDrive
 
 			Content = grid;
 
-			var v = new Button { Text = "sdadasadsdasd" };
+			var b = new Button
+			{
+				Text = "sdadasadsdasd",
+				WidthRequest = 300,
+				HeightRequest = 300
+			};
+
+			var s = new StackLayout()
+			{
+				Children =
+				{
+					b
+				}
+			};
 
 			var cp = new ContentPage()
 			{
-				Content = grid
+				Content = b
 			};
-			v.Clicked += (sender, e) => { Navigation.PopModalAsync(true); };
+			b.Clicked += (sender, e) => { Navigation.PopModalAsync(true); };
 
 			Navigation.PushModalAsync(cp);
 		}

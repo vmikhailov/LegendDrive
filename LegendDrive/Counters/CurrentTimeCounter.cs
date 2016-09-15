@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace LegendDrive
+namespace LegendDrive.Counters
 {
 	public class CurrentTimeCounter : BaseCounter<DateTime>
 	{
@@ -15,6 +15,22 @@ namespace LegendDrive
 			: base(name)
 		{
 			_timer = new Timer(x => OnPropertyChanged("Value"), null, 0, 1000);
+		}
+
+		public override bool IsRunning
+		{
+			get
+			{
+				return true;
+			}
+		}
+
+		public override void Start()
+		{
+		}
+
+		public override void Stop()
+		{
 		}
 
 		public override string ValueString

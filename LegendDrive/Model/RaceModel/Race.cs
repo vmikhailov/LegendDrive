@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using LegendDrive.Counters;
+using LegendDrive.Counters.Interfaces;
+using LegendDrive.Persistance;
+using Newtonsoft.Json.Linq;
 
-namespace LegendDrive
+namespace LegendDrive.Model.RaceModel
 {
-	public class Race : BaseBindingObject
+	public class Race : BaseBindingObject, ISupportStatePersistance
 	{
 		private Object _syncObject = new object();
 		public Race()
@@ -114,8 +118,11 @@ namespace LegendDrive
 			}
 			private set
 			{
-				_isRunning = value;
-				OnPropertyChanged("IsRunning");
+				if (_isRunning != value)
+				{
+					_isRunning = value;
+					OnPropertyChanged("IsRunning");
+				}
 			}
 		}
 
@@ -256,6 +263,23 @@ namespace LegendDrive
 				var last = Segments.LastOrDefault();
 				if (last != null) Segments.Remove(last);
 			}
+		}
+
+		public JObject GetState()
+		{
+			var obj = new JObject();
+			obj.AddValue(nameof(IsRunning), IsRunning);
+			obj.AddCollection(nameof(Turns), Turns);
+			obj.AddCollection(nameof(Segments), Segments);
+			return obj;
+		}
+
+		public void LoadState(JObject obj)
+		{
+			obj.LoadCollection(nameof(Turns), Turns);
+			obj.LoadCollection(nameof(Segments), Segments);
+			IsRunning = obj.GetValue<bool>(nameof(IsRunning));
+			SyncTurnsAndSegments();
 		}
 	}
 }

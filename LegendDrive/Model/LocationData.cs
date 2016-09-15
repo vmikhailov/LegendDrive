@@ -1,14 +1,13 @@
 ﻿using System;
 using Android.Locations;
 
-namespace LegendDrive
+namespace LegendDrive.Model
 {
 	public class LocationData
-	{ 
-		public LocationData()
-		{
-			//var x = new GPXLib.GPXLib();
-		}
+	{
+		public static LocationData Offline { get; } = new LocationData() { GpsOn = false };
+
+		public bool GpsOn { get; set; } = true;
 
 		public double Latitude { get; set; }
 
@@ -24,8 +23,6 @@ namespace LegendDrive
 		}
 
 		public DateTime Time { get; set; }
-
-		public TimeSpan DeltaT { get; set; }
 
 		public long Nanos { get; set; }
 

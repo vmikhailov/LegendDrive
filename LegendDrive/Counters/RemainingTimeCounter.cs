@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel;
 
-namespace LegendDrive
+namespace LegendDrive.Counters
 {
 	public class RemainingTimeCounter : BaseDifferenceCounter<TimeSpan?>
 	{

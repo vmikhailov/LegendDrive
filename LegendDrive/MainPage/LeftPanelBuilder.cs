@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LegendDrive.Counters;
+using LegendDrive.Model;
+using LegendDrive.Model.RaceModel;
 using Xamarin.Forms;
 
 namespace LegendDrive
@@ -43,6 +46,8 @@ namespace LegendDrive
 			startFinishButton.SetBinding(Button.TextProperty, 
 			                             FuncBinding.Create<bool, string>("IsRunning", x => x ? "Finish" : "Start"));
 
+			var resetButton = btnFunc("Reset", GlobalCommand.ResetAll);
+
 			var clearButton = btnFunc("Clear", GlobalCommand.ClearAll);
 			clearButton.SetBinding(VisualElement.IsEnabledProperty,
 								  FuncBinding.Create<Race, bool>(".", x => !x.IsRunning));
@@ -70,7 +75,7 @@ namespace LegendDrive
 			grid.ColumnSpacing = 0;
 			grid.RowSpacing = 0;
 
-			grid.Children.Add(BuildButtonsPanel(startFinishButton, clearButton, paramsButton, backButton), 0, 0);
+			grid.Children.Add(BuildButtonsPanel(startFinishButton, resetButton, clearButton, paramsButton, backButton), 0, 0);
 
 			grid.Children.Add(new CountersPanelBuilder(model).Build(), 0, 1);
 

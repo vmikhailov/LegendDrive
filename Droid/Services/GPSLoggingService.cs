@@ -6,30 +6,30 @@ using GPX = MKCoolsoft.GPXLib.GPXLib;
 using System.Xml.Serialization;
 using System.Globalization;
 using Polenter.Serialization;
+using LegendDrive.Model;
 
 namespace LegendDrive
 {
-	public class GPXLogWriter
+	public class GPSLoggingService
 	{
 		GPX gpx;
-		DateTime trackStartTime;
 
 		SharpSerializer serializer;
 
-		static GPXLogWriter _instance;
-		public static GPXLogWriter Instance
+		static GPSLoggingService _instance;
+		public static GPSLoggingService Instance
 		{
 			get
 			{
 				if (_instance == null)
 				{
-					_instance = new GPXLogWriter();
+					_instance = new GPSLoggingService();
 				}
 				return _instance;
 			}
 		}
 
-		public GPXLogWriter()
+		public GPSLoggingService()
 		{
 		}
 
@@ -40,32 +40,37 @@ namespace LegendDrive
 			MessagingCenter.Subscribe<LocationData>(this, "raceEvent_Turn", (loc) => Process_Turn(loc));
 			MessagingCenter.Subscribe<LocationData>(this, "raceEvent_Back", (loc) => Process_Back(loc));
 			MessagingCenter.Subscribe<LocationData>(this, "raceEvent_NewLocation", (loc) => Process_NewLocation(loc));
-
 			serializer = new SharpSerializer();
+		}
+
+		protected GPX GetGpx(LocationData loc)
+		{
+			if (gpx != null) return gpx;
+			gpx = new GPX()
+			{
+				Metadata = new Metadata()
+				{
+					Time = DateTime.Now,
+					TimeSpecified = true
+				}
+			};
+			gpx.WptList.Add(CreateWpt("Start", loc));
+			return gpx;
 		}
 
 		void Process_Start(LocationData loc)
 		{
-			gpx = CreateGPX(loc);
+			GetGpx(loc);
 		}
 
 		void Process_Back(LocationData loc)
 		{
-			if (gpx == null)
-			{
-				gpx = CreateGPX(loc);
-			}
-			gpx.WptList.Add(CreateWpt("Back", loc));
+			GetGpx(loc).WptList.Add(CreateWpt("Back", loc));
 		}
 
 		void Process_Turn(LocationData loc)
 		{
-			if (gpx == null)
-			{
-				gpx = CreateGPX(loc);
-			}
-			
-			gpx.WptList.Add(CreateWpt("Turn", loc));
+			GetGpx(loc).WptList.Add(CreateWpt("Turn", loc));
 		}
 
 		void Process_Finish(LocationData loc)
@@ -74,15 +79,9 @@ namespace LegendDrive
 			{
 				if (gpx == null) return;
 				gpx.WptList.Add(CreateWpt("Finish", loc));
-				var fileName = trackStartTime.ToString("yyyy-MM-dd-HH-mm", CultureInfo.InvariantCulture);
-
-
+				var fileName = gpx.Metadata.Time.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
 				var sdCardPath = Android.OS.Environment.ExternalStorageDirectory.Path;
 				var folderName = System.IO.Path.Combine(sdCardPath, "LegendDrive/Tracks");
-			
-				//var folderName = Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments); //"/LegendDrive/Tracks"; 
-
-
 				var fullFileName = $"{folderName}/gpx_{fileName}.xml";
 
 				try
@@ -93,7 +92,13 @@ namespace LegendDrive
 						directory.Create();
 					}
 
-					gpx.SaveToFile(fullFileName);
+					using (var file = File.Create(fullFileName))
+					{
+						//var xmlSerializer = new XmlSerializer(typeof(GPX));
+						//xmlSerializer.Serialize(file, gpx);
+						//gpx.SaveToFile(fullFileName);
+						serializer.Serialize(gpx, file);
+					}
 				}
 				catch (Exception ex)
 				{
@@ -105,24 +110,11 @@ namespace LegendDrive
 
 		void Process_NewLocation(LocationData loc)
 		{
-			if (gpx == null)
-			{
-				gpx = CreateGPX(loc);
-			}
-			gpx.AddTrackPoint("default", 1, CreateWpt("z", loc));
-		}
-
-		private GPX CreateGPX(LocationData loc)
-		{
-			trackStartTime = DateTime.Now;
-			gpx = new GPX();
-			gpx.WptList.Add(CreateWpt("Start", loc));
-			return gpx;
+			GetGpx(loc).AddTrackPoint("default", 1, CreateWpt("z", loc));
 		}
 
 		private Wpt CreateWpt(string name, LocationData loc)
 		{
-
 			return new Wpt((decimal)loc.Latitude, (decimal)loc.Longitude)
 			{
 				Name = name,

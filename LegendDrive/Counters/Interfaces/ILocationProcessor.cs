@@ -1,4 +1,6 @@
-﻿namespace LegendDrive
+﻿using LegendDrive.Model;
+
+namespace LegendDrive.Counters.Interfaces
 {
 	public interface ILocationProcessor
 	{

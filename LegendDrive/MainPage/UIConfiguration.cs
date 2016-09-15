@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using LegendDrive.Counters.Interfaces;
 using Xamarin.Forms;
 
 namespace LegendDrive
@@ -33,7 +34,7 @@ namespace LegendDrive
 		public static Color EnabledCounterBorder = Color.FromHex("cccccc");
 		public static Color DisabledCounterBorder = Color.Gray;
 		public static Color ImportantCounterBorder = Color.Yellow;
-		public static Color CriticalCounterBorder = Color.Red;
+		public static Color CriticalCounterBorder = Color.FromHex("e20026");//Color.Red;
 
 		public static IDictionary<CounterColor, Color> CounterColors = new Dictionary<CounterColor, Color>
 		{
@@ -41,7 +42,7 @@ namespace LegendDrive
 			{ CounterColor.Blue, Color.FromHex("0072bc") },
 			{ CounterColor.Green, Color.FromHex("00cc22") },
 			{ CounterColor.Orange, Color.FromHex("f26522") },
-			{ CounterColor.Red, Color.FromHex("ed1c24") },
+			{ CounterColor.Red, Color.FromHex("e20026") },//Color.FromHex("ed1c24") },
 			{ CounterColor.Magenta, Color.FromHex("92278f") },
 			{ CounterColor.Yellow, Color.FromHex("fff200") }
 		};

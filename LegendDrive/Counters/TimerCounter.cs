@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using LegendDrive.Counters.Interfaces;
+using LegendDrive.Persistance;
+using Newtonsoft.Json.Linq;
 
-namespace LegendDrive
+namespace LegendDrive.Counters
 {
-	public class TimerCounter : BaseCounter<TimeSpan?>, ISupportHistory
+	public class TimerCounter : BaseCounter<TimeSpan?>, ISupportHistory, ISupportStatePersistance
 	{
 		private Timer _timer;
 		private long _elapsed;
@@ -49,6 +52,7 @@ namespace LegendDrive
 		public override void Reset()
 		{
 			_elapsed = 0;
+			_history.Clear();
 		}
 
 		public override void Dispose()
@@ -71,6 +75,21 @@ namespace LegendDrive
 				_elapsed = _elapsed + _history.Pop();
 				OnPropertyChanged("Value");
 			}
+		}
+
+		public JObject GetState()
+		{
+			var obj = new JObject();
+			obj.AddValue(nameof(_elapsed), _elapsed);
+			obj.AddValue(nameof(_history), _history);
+			return obj;
+		}
+
+		public void LoadState(JObject obj)
+		{
+			_elapsed = obj.GetValue<long>(nameof(_elapsed));
+			_history = obj.GetValue<Stack<long>>(nameof(_history));
+			OnPropertyChanged("Value");
 		}
 	}
 }

@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 
-namespace LegendDrive
+namespace LegendDrive.Counters
 {
 	public class RemainingDistanceCounter : BaseDifferenceCounter<double?>
 	{
@@ -29,6 +29,12 @@ namespace LegendDrive
 				SetImportant(TypedValue < 100);
 				SetCritical(TypedValue <= 0);
 			}
+		}
+
+		public override void Start()
+		{
+			base.Start();
+			Recalc();
 		}
 
 		public override void Reset()

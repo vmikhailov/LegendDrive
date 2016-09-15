@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using LegendDrive.Counters.Interfaces;
+using LegendDrive.Model;
 
-namespace LegendDrive
+namespace LegendDrive.Counters
 {
 	public class DistanceCounter2 : BaseCounter<double?>, ILocationProcessor, ISupportHistory
 	{
@@ -35,6 +37,7 @@ namespace LegendDrive
 
 		public virtual void SetLocation(LocationData location)
 		{
+			if (!location.GpsOn) return;
 			location = location.RoundCoords();
 			if (IsRunning)
 			{

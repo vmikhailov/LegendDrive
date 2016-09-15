@@ -1,5 +1,5 @@
 ﻿using System;
-namespace LegendDrive
+namespace LegendDrive.Counters.Interfaces
 {
 	public interface ISupportHistory
 	{
