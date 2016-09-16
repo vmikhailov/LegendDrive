@@ -110,31 +110,26 @@ namespace LegendDrive.Model.RaceModel
 				yield break;
 			}
 
-			if (parts.Length % 2 == 0)
+			if (parts.Length == 2)
 			{
-				for (int i = 0; i < parts.Length; i += 2)
+				var segment = new RaceSegment()
 				{
-					var segment = new RaceSegment()
-					{
-						Distance = Double.Parse(parts[i]),
-						Speed = DoubleParse(parts[i + 1])
-					};
-					yield return segment;
-				}
+					Distance = DoubleParse(parts[0]),
+					Speed = DoubleParse(parts[1]),
+				};
+				yield return segment;
 				yield break;
 			}
-			else
+
+			for (int i = 0; i < parts.Length; i++)
 			{
-				for (int i = 0; i < parts.Length; i++)
+				var segment = new RaceSegment()
 				{
-					var segment = new RaceSegment()
-					{
-						Distance = DoubleParse(parts[i]),
-					};
-					yield return segment;
-				}
-				yield break;
+					Distance = DoubleParse(parts[i]),
+				};
+				yield return segment;
 			}
+			yield break;
 		}
 
 		private static Double DoubleParse(string str)

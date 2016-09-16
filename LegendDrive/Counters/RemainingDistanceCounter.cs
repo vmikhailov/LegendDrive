@@ -34,7 +34,7 @@ namespace LegendDrive.Counters
 		public override void Start()
 		{
 			base.Start();
-			Recalc();
+
 		}
 
 		public override void Reset()

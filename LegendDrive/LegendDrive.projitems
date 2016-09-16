@@ -49,13 +49,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Counters\RemainingTimeCounter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Counters\Interfaces\ISupportHistory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Counters\BaseDifferenceCounter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Counters\DistanceCounter2.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Counters\DistanceCounter3.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Model\CountersGroup.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Persistance\ISupportStatePersistance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Persistance\StatePersistanceHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Model\Simulator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Model\NullableExtension.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messaging\MessagingHub.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Model\" />
@@ -67,5 +66,6 @@
     <Folder Include="$(MSBuildThisFileDirectory)Model\RaceModel\" />
     <Folder Include="$(MSBuildThisFileDirectory)Counters\Interfaces\" />
     <Folder Include="$(MSBuildThisFileDirectory)Persistance\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Messaging\" />
   </ItemGroup>
 </Project>

@@ -77,18 +77,20 @@ namespace LegendDrive.Counters
 			}
 		}
 
-		public JObject GetState()
+		public override JObject GetState()
 		{
 			var obj = new JObject();
+			obj.AddValue("base", base.GetState());
 			obj.AddValue(nameof(_elapsed), _elapsed);
 			obj.AddValue(nameof(_history), _history);
 			return obj;
 		}
 
-		public void LoadState(JObject obj)
+		public override void LoadState(JObject obj)
 		{
 			_elapsed = obj.GetValue<long>(nameof(_elapsed));
 			_history = obj.GetValue<Stack<long>>(nameof(_history));
+			base.LoadState(obj.GetValue<JObject>("base"));
 			OnPropertyChanged("Value");
 		}
 	}

@@ -92,7 +92,7 @@ namespace LegendDrive
 							//newLabel("No", segmentListNoFontSize, LayoutOptions.Center),
 							centerStack(newLabel("No", UIConfiguration.SegmentListNoFontSize, LayoutOptions.CenterAndExpand), UIConfiguration.SegmentListNoSize),
 							newBox(),
-							centerStack(newLabel("Distance", UIConfiguration.SegmentListDistanceFontSize, LayoutOptions.CenterAndExpand), UIConfiguration.SegmentListDistanceSize),
+							centerStack(newLabel("Distance", UIConfiguration.SegmentListLengthFontSize, LayoutOptions.CenterAndExpand), UIConfiguration.SegmentListLengthSize),
 							newBox(),
 							centerStack(newLabel("Speed", UIConfiguration.SegmentListSpeedFontSize, LayoutOptions.CenterAndExpand), UIConfiguration.SegmentListSpeedSize),
 							newBox(),
@@ -166,7 +166,7 @@ namespace LegendDrive
 			{
 				//HeightRequest = buttonHeight,
 				FontSize = UIConfiguration.ButtonFontSize * 0.8,
-				TextColor = UIConfiguration.ButtonColor,
+				TextColor = Color.White,
 				VerticalTextAlignment = TextAlignment.Center,
 				BindingContext = model.Numpad
 			};

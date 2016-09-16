@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using LegendDrive.Counters;
 using LegendDrive.Counters.Interfaces;
+using LegendDrive.Messaging;
 using LegendDrive.Model;
 using LegendDrive.Model.RaceModel;
 using LegendDrive.Persistance;
@@ -30,10 +31,10 @@ namespace LegendDrive.Model
 			CountersGroup = new CountersGroup(this);
 			CountersGroup.Init();
 
-			MessagingCenter.Subscribe<GlobalCommand>(this, "click", (cmd) => ProcessClickCommand(cmd));
-			MessagingCenter.Subscribe<GlobalCommand>(this, "confirmed", (cmd) => ProcessConfirmedCommand(cmd));
-			MessagingCenter.Subscribe<GlobalCommand>(this, "canceled", (cmd) => ProcessCanceledCommand(cmd));
-			MessagingCenter.Subscribe<LocationData>(this, "raceEvent_NewLocation", (loc) => ProcessNewLocation(loc));
+			MessagingHub.Subscribe<GlobalCommand>(this, QueueType.Click, (cmd) => ProcessClickCommand(cmd));
+			MessagingHub.Subscribe<GlobalCommand>(this, QueueType.Confirmed, (cmd) => ProcessConfirmedCommand(cmd));
+			MessagingHub.Subscribe<GlobalCommand>(this, QueueType.Canceled, (cmd) => ProcessCanceledCommand(cmd));
+			MessagingHub.Subscribe<LocationData>(this, QueueType.Location, (loc) => ProcessNewLocation(loc));
 		}
 
 
@@ -42,23 +43,30 @@ namespace LegendDrive.Model
 			switch (cmd.Code)
 			{
 				case GlobalCommandCodes.StartFinish:
-					if (Race.IsRunning)
+					if (Race.IsRunning && Race.Segments.LastOrDefault() != Race.CurrentSegment)
 					{
-						MessagingCenter.Send(GlobalCommand.AskCofirmation(cmd, "Do you really want to finish the race?"), "ask");
+						MessagingHub.Send(QueueType.AskConfirmation, GlobalCommand.AskConfirmation(cmd, "Do you really want to finish the race?"));
 					}
-					else StartRace();
+					else 
+					{
+						StartRace();
+					}
 					break;
 				case GlobalCommandCodes.ResetAll:
 					if (Race.IsRunning)
 					{
-						MessagingCenter.Send(GlobalCommand.AskCofirmation(cmd, "Do you really want to reset after start?"), "ask");
+						MessagingHub.Send(QueueType.AskConfirmation, GlobalCommand.AskConfirmation(cmd, "Do you really want to reset after start?"));
+					}
+					else
+					{
+						ResetAll();
 					}
 					break;
 				case GlobalCommandCodes.ClearAll:
-					MessagingCenter.Send(GlobalCommand.AskCofirmation(cmd, "Delete all data?"), "ask");
+					MessagingHub.Send(QueueType.AskConfirmation, GlobalCommand.AskConfirmation(cmd, "Delete all data?"));
 					break;
 				case GlobalCommandCodes.GPSReset:
-					MessagingCenter.Send(cmd, "global");
+					MessagingHub.Send(QueueType.Global, cmd);
 					break;
 				case GlobalCommandCodes.Turn:
 					MakeATurn();
@@ -108,7 +116,8 @@ namespace LegendDrive.Model
 			Race.StartRace();
 			if (LastLocaton != null)
 			{
-				MessagingCenter.Send(LastLocaton, "raceEvent_Start");
+				MessagingHub.Send(QueueType.Race, new RaceEvent(LastLocaton, RaceEventTypes.Start));
+				MessagingHub.Send(new VibrateCommand("111"));
 			}
 		}
 
@@ -121,7 +130,8 @@ namespace LegendDrive.Model
 			Race.FinishRace();
 			if (LastLocaton != null)
 			{
-				MessagingCenter.Send(LastLocaton, "raceEvent_Finish");
+				MessagingHub.Send(QueueType.Race, new RaceEvent(LastLocaton, RaceEventTypes.Finish));
+				MessagingHub.Send(new VibrateCommand("333"));
 			}
 		}
 
@@ -142,7 +152,8 @@ namespace LegendDrive.Model
 			}
 			if (LastLocaton != null)
 			{
-				MessagingCenter.Send(LastLocaton, "raceEvent_Turn");
+				MessagingHub.Send(QueueType.Race, new RaceEvent(LastLocaton, RaceEventTypes.Turn));
+				MessagingHub.Send(new VibrateCommand("11"));
 			}
 		}
 
@@ -163,7 +174,8 @@ namespace LegendDrive.Model
 			Race.RemoveLastTurn();
 			if (LastLocaton != null)
 			{
-				MessagingCenter.Send(LastLocaton, "raceEvent_Back");
+				MessagingHub.Send(QueueType.Race, new RaceEvent(LastLocaton, RaceEventTypes.Back));
+				MessagingHub.Send(new VibrateCommand("33"));
 			}
 		}
 
@@ -198,7 +210,6 @@ namespace LegendDrive.Model
 			LastLocaton = loc;
 			OnPropertyChanged("LastLocation");
 			CountersGroup.ProcessNewLocation(loc);
-			//SaveState();
 		}
 
 		public JObject GetState()
@@ -241,13 +252,13 @@ namespace LegendDrive.Model
 				}
 			}
 
-			if (Race.IsRunning)
-			{
-				foreach (var c in CountersGroup.All)
-				{
-					c.Start();
-				}
-			}
+			//if (Race.IsRunning)
+			//{
+			//	foreach (var c in CountersGroup.All)
+			//	{
+			//		c.Start();
+			//	}
+			//}
 		}
 	}
 }

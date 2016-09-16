@@ -1,5 +1,6 @@
 ﻿using System;
-namespace LegendDrive.Droid
+
+namespace LegendDrive.Droid.Services
 {
 	public class ModalDialogService
 	{

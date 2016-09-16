@@ -3,10 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using LegendDrive.Counters.Interfaces;
+using LegendDrive.Persistance;
+using Newtonsoft.Json.Linq;
 
 namespace LegendDrive.Counters
 {
-	public class TriggeredFuncCounter<TObject, TResult> : BaseCounter<TResult>, ITriggeredFuncCounter<TObject, TResult> 
+	public class TriggeredFuncCounter<TObject, TResult> : 
+		BaseCounter<TResult>, 
+		ITriggeredFuncCounter<TObject, TResult>,
+	 	ISupportStatePersistance
 		where TObject : INotifyPropertyChanged
 	{
 		IDictionary<object, List<string>> triggers = new Dictionary<object, List<string>>();
@@ -96,6 +101,21 @@ namespace LegendDrive.Counters
 		{
 			get;
 			set;
+		}
+
+		public override JObject GetState()
+		{
+			var obj = new JObject();
+			obj.AddValue("base", base.GetState());
+			obj.AddValue(nameof(value), value);
+			return obj;
+		}
+
+		public override void LoadState(JObject obj)
+		{
+			value = obj.GetValue<TResult>(nameof(value));
+			base.LoadState(obj.GetValue<JObject>("base"));
+			OnPropertyChanged("Value");
 		}
 	}
 }

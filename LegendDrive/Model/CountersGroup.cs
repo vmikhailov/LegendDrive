@@ -5,6 +5,7 @@ using LegendDrive;
 using LegendDrive.Model.RaceModel;
 using LegendDrive.Counters;
 using LegendDrive.Counters.Interfaces;
+using LegendDrive.Messaging;
 
 namespace LegendDrive.Model
 {
@@ -62,6 +63,13 @@ namespace LegendDrive.Model
 				x.SetBase(raceTimer);
 				x.SetTarget(segmentTimer);
 				x.Size = CounterSize.L;
+				//x.OnValueChanged += y =>
+				//{
+				//	if (y.TypedValue.GetValue().TotalSeconds < 10)
+				//	{
+				//		MessagingHub.Send(new VibrateCommand("1"));
+				//	}
+				//};
 			});
 
 			var raceRemainingTime = new RemainingTimeCounter("Remaining race time").With(x =>
@@ -82,10 +90,11 @@ namespace LegendDrive.Model
 				x.BindTo(model, y =>
 				{
 					if (y.LastLocaton == null) return "N/A";
-					return string.Format("La = {0:F5}\nLo = {1:F5}\nAc = {2:F3} {3:F2}",
+					return string.Format("Lat = {0:F5}\nLon = {1:F5}\nAcc = {2:F3} Spd = {3:F1} {4}",
 										 y.LastLocaton.Latitude,
 										 y.LastLocaton.Longitude,
 										 y.LastLocaton.Accuracy,
+					                     y.LastLocaton.SpeedKmh,
 										 @"-\|/-\|/"[gpsSymbol++ % 8]);
 				});
 				x.AddTrigger("LastLocation", model);
@@ -184,17 +193,19 @@ namespace LegendDrive.Model
 						var timerFromStart = raceTimer.TypedValue;
 						var timerAtEndOfSegment = y.TimeOffsetAtTheEndOfCurrentSegment;
 						var timeLeft = timerAtEndOfSegment - timerFromStart;
-						if (timeLeft?.TotalSeconds <= 1) return 1000;
+						var remainingRaceTimeSeconds = raceRemainingTime.TypedValue.GetValue().TotalSeconds;
+						if (timeLeft?.TotalSeconds <= 1) return remainingRaceTimeSeconds > 0 ? 1000 : 0;
 						var distanceLeft = y.CurrentSegment?.Distance - segmentDistance?.TypedValue;
 						var speed = distanceLeft / timeLeft?.TotalSeconds * 3.6;
 						if (speed >= 90) return 1000;
-						if (speed <= 5) return 0;
+						if (speed <= 1) return 0;
 						return speed;
 					}
 					return 0;
 				});
 				x.AddTrigger(".", model.Race);
 				x.AddTrigger("Value", raceTimer);
+				x.AddTrigger("Value", raceRemainingTime);
 			});
 
 			var recommendedSpeedString = new TriggeredFuncCounter<Race, string>("Recommended speed", "{0}").With(x =>
@@ -231,19 +242,21 @@ namespace LegendDrive.Model
 			{
 				x.BindTo(model.Race, y =>
 				{
-					var speed = (int)segmentFiveSecondsSpeed.TypedValue;//segmentFiveSecondsSpeed.TypedValue;
+					var speed = segmentFiveSecondsSpeed.TypedValue;//segmentFiveSecondsSpeed.TypedValue;
 					var timerFromStart = raceTimer.TypedValue;
 					var distanceLeft = y.CurrentSegment?.Distance - segmentDistance?.TypedValue;
 
 					if (speed <= 0.5 || !timerFromStart.HasValue || !distanceLeft.HasValue) return TimeSpan.FromMinutes(30);
-
 					var timeToEndOfSeg = distanceLeft.Value / speed * 3.6; //relative time TO End Of Segment With Current Speed
+
 					var time1 = timerFromStart.Value + TimeSpan.FromSeconds(timeToEndOfSeg); //time AT End Of Segment With Current Speed
 					var time2 = y.TimeOffsetAtTheEndOfCurrentSegment;
 
 					var dt = (time2 - time1).TotalSeconds;
 
 					dt = Math.Round(dt, 0);
+
+
 					//drop milliseconds to avoid blinking
 					return TimeSpan.FromSeconds(dt);
 				});

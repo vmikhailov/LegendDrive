@@ -1,27 +1,26 @@
-﻿
-using Android.App;
+﻿using Android.App;
 using Android.Content.PM;
 using Android.Views;
 using Android.OS;
-using Acr.UserDialogs;
 using Xamarin.Forms;
 using Android.Locations;
 using Android.Runtime;
 using System;
 using System.Threading.Tasks;
 using LegendDrive.Model;
+using LegendDrive.Messaging;
+using LegendDrive.Droid.Services;
 
 namespace LegendDrive.Droid
 {
-	[Activity(Label = "LegendDrive.Droid", Icon = "@drawable/icon", 
-	          //Theme = "@style/DarkTheme",
+	[Activity(Label = "Legend Drive", Icon = "@drawable/icon", 
 	          Theme = "@style/MyTheme",
-	          //Theme = "@android:style/Theme.Material",
 	          MainLauncher = true, 
 	          ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
 	public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
 	{
 		LocationService _locationService;
+		VibrationService _vibrationService;
 
 		protected override void OnCreate(Bundle bundle)
 		{
@@ -33,15 +32,16 @@ namespace LegendDrive.Droid
 
 			global::Xamarin.Forms.Forms.Init(this, bundle);
 
-			UserDialogs.Init(() => this);
-
-			var _locationManager = (LocationManager)GetSystemService(LocationService);
-			_locationService = new Droid.LocationService(_locationManager);
+			var locationManager = (LocationManager)GetSystemService(LocationService);
+			_locationService = new LocationService(locationManager);
 			_locationService.Init();
+
+			var vibrator = (Vibrator)GetSystemService(VibratorService);
+			_vibrationService = new VibrationService(vibrator);
+			_vibrationService.Init();
+
 			GPSLoggingService.Instance.Init();
 			LoadApplication(new App());
-
-			MessagingCenter.Subscribe<GlobalCommand>(this, "ask", (cmd) => ProcessCommand(cmd));
 		}
 
 		protected override void OnResume()
@@ -64,30 +64,6 @@ namespace LegendDrive.Droid
 			//	CurrentFocus.SystemUiVisibility = 
 			//		(StatusBarVisibility)(SystemUiFlags.ImmersiveSticky | SystemUiFlags.HideNavigation | SystemUiFlags.LayoutFullscreen  );
 			//}
-		}
-
-		private async Task ProcessCommand(GlobalCommand cmd)
-		{
-			if (cmd.Code == GlobalCommandCodes.AskConfirmation)
-			{
-				var dlg = UserDialogs.Instance;
-				var answer = await dlg.ConfirmAsync(new ConfirmConfig()
-				{
-					Message = cmd.Message + " " + cmd.GetHashCode(),
-					CancelText = "Cancel",
-					OkText = "Ok",
-					Title = "Alert"
-				});
-				//var answer = await DisplayAlert("Alert", cmd.Message, "Yes", "No");
-				if (answer)
-				{
-					MessagingCenter.Send(GlobalCommand.ReplyCofirmation(cmd.CommandToConfirm), "confirmed");
-				}
-				else
-				{
-					MessagingCenter.Send(GlobalCommand.ReplyCofirmation(cmd.CommandToConfirm), "canceled");
-				}
-			}
 		}
 	}
 }

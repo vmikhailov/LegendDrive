@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using LegendDrive;
 using LegendDrive.Counters.Interfaces;
+using LegendDrive.Messaging;
 using Xamarin.Forms;
 
 namespace LegendDrive.Model
@@ -40,7 +41,7 @@ namespace LegendDrive.Model
 		private long tick = 0;
 		private LocationData prevLoc;
 		int samples = 0;
-
+		double speed;
 		private void Worker(object state)
 		{
 			var rspeed = state as IRaceCounter<double?>;
@@ -49,20 +50,22 @@ namespace LegendDrive.Model
 			samples = ++samples % 60;
 
 
-			var speed = rspeed?.TypedValue;
+			var targetSpeed = rspeed?.TypedValue;
+			targetSpeed = targetSpeed > 10 ? 10 : targetSpeed;
 
-			if (speed.HasValue)
-			{
-				speed = speed > 80 ? 80 : speed;
-				speed += r.Next(16) - 8;
-			}
-			else
-			{
-				speed = r.Next(10) + 15;
-			}
-			if (samples > 30) speed = 5;
-			if (samples > 50) return;
-			//speed = 20;
+			speed += targetSpeed > (speed + 0.5) ? 0.5 : (targetSpeed < (speed - 0.5) ? -0.5: 0);
+			//if (speed.HasValue)
+			//{
+			//	speed = speed > 80 ? 80 : speed;
+			//	speed += r.Next(16) - 8;
+			//}
+			//else
+			//{
+			//	speed = r.Next(10) + 15;
+			//}
+			//if (samples > 30) speed = 5;
+			//if (samples > 50) return;
+			//speed = 8;
 
 			var k = LocationData.DistanceBetween(
 				new LocationData() { Longitude = 50.0001, Latitude = 30.0001 },
@@ -70,14 +73,14 @@ namespace LegendDrive.Model
 
 			var loc = new LocationData()
 			{
-				Latitude = prevLoc.Latitude + 0.0001 / k * (speed.Value / 3.6),
-				Longitude = prevLoc.Longitude + 0.0001 / k * (speed.Value / 3.6),
-				Speed = speed.Value / 3.6,
-				Time = DateTime.Now
+				Latitude = prevLoc.Latitude + 0.0001 / k * (speed/ 3.6),
+				Longitude = prevLoc.Longitude + 0.0001 / k * (speed / 3.6),
+				Speed = speed / 3.6,
+				Time = DateTime.Now.ToUniversalTime()
 			};
 
 			prevLoc = loc;
-			MessagingCenter.Send(loc, "raceEvent_NewLocation");
+			MessagingHub.Send(QueueType.Location, loc);
 
 			tick += 1000;
 		}

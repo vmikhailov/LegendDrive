@@ -5,6 +5,7 @@ using LegendDrive.Counters;
 using LegendDrive.Model;
 using LegendDrive.Model.RaceModel;
 using Xamarin.Forms;
+using LegendDrive.Messaging;
 
 namespace LegendDrive
 {
@@ -23,7 +24,7 @@ namespace LegendDrive
 
 		private View BuildLeftPanel()
 		{
-			var normalCommand = new Command((param) => { MessagingCenter.Send((GlobalCommand)param, "click"); });
+			var normalCommand = new Command((param) => { MessagingHub.Send(QueueType.Click, (GlobalCommand)param); });
 
 			var btnFunc = new Func<string, GlobalCommand, Button>((text, cmdCode) =>
 			{
@@ -35,6 +36,8 @@ namespace LegendDrive
 					BackgroundColor = UIConfiguration.ButtonColor,
 					FontSize = UIConfiguration.LargeButtonFontSize,
 					BindingContext = model.Race,
+					Margin = new Thickness(-2, -4),
+					BorderRadius = 0,
 					CommandParameter = cmdCode
 				};
 				btn.Command = normalCommand;
@@ -52,7 +55,7 @@ namespace LegendDrive
 			clearButton.SetBinding(VisualElement.IsEnabledProperty,
 								  FuncBinding.Create<Race, bool>(".", x => !x.IsRunning));
 
-			var paramsButton = btnFunc("GPS", GlobalCommand.GPSReset);
+			var gpsButton = btnFunc("GPS", GlobalCommand.GPSReset);
 
 			var backButton = btnFunc("Back", GlobalCommand.Back);
 			backButton.SetBinding(VisualElement.IsEnabledProperty,
@@ -75,7 +78,7 @@ namespace LegendDrive
 			grid.ColumnSpacing = 0;
 			grid.RowSpacing = 0;
 
-			grid.Children.Add(BuildButtonsPanel(startFinishButton, resetButton, clearButton, paramsButton, backButton), 0, 0);
+			grid.Children.Add(BuildButtonsPanel(startFinishButton, resetButton, clearButton, gpsButton, backButton), 0, 0);
 
 			grid.Children.Add(new CountersPanelBuilder(model).Build(), 0, 1);
 
@@ -96,7 +99,7 @@ namespace LegendDrive
 				grid.Children.Add(view, i++, 0);
 			}
 			grid.ColumnSpacing = 0;
-			grid.RowSpacing = 0;
+			grid.RowSpacing = -2;
 			return grid;
 		}
 	}

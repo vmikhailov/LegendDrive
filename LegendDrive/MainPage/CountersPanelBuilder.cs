@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using LegendDrive.Counters.Interfaces;
+using LegendDrive.Messaging;
 using LegendDrive.Model;
 using Xamarin.Forms;
 
@@ -69,6 +70,35 @@ namespace LegendDrive
 				return UIConfiguration.CounterFontSizes[x];
 			};
 
+			var tapRecognizer = new TapGestureRecognizer();
+			tapRecognizer.NumberOfTapsRequired = 2;
+			tapRecognizer.Tapped += (sender, e) =>
+			{
+				var cntr = (sender as VisualElement)?.BindingContext as IRaceCounter;
+				if (cntr != null)
+				{
+					if (cntr.IsRunning) cntr.Stop(); else cntr.Start();
+				}
+				//MessagingHub.Send(new VibrateCommand("33011101111013"));
+				
+				//var name = cntr?.Name ?? "unknown";
+				//MessagingHub.Send(QueueType.Gesture, $"tap: {name} {sender.GetType().Name}");
+			};
+
+			var panRecognizer = new PanGestureRecognizer();
+			panRecognizer.TouchPoints = 1;
+			panRecognizer.PanUpdated += (sender, e) =>
+			{
+				var cntr = (sender as VisualElement)?.BindingContext as IRaceCounter;
+				if (cntr != null)
+				{
+					if (cntr.IsRunning) cntr.Stop(); else cntr.Start();
+				}
+				//var name = cntr?.Name ?? "unknown";
+				//MessagingHub.Send(QueueType.Gesture, $"pan: {e.TotalX} {e.TotalY} {name} {sender.GetType().Name}");
+			};
+				
+
 			var l1 = new Label()
 			{
 				TextColor = Color.White,
@@ -99,16 +129,20 @@ namespace LegendDrive
 			l2.SetBinding(Label.FontAttributesProperty, 
 			              FuncBinding.Create<CounterSize, FontAttributes>("Size", 
                               x => x >= CounterSize.XXL ? FontAttributes.Bold : FontAttributes.None));
+			//l2.GestureRecognizers.Add(tapRecognizer);
 
 			var relative = new RelativeLayout()
 			{
 				Padding = new Thickness(0, 0),
+				Margin = new Thickness(2),
 				HorizontalOptions = LayoutOptions.FillAndExpand,
 				VerticalOptions = LayoutOptions.FillAndExpand,
 				WidthRequest = -1,
 				HeightRequest = -1,
-				BindingContext = counter,
+				BindingContext = counter
+
 			};
+
 			relative.SetBinding(VisualElement.BackgroundColorProperty,
 							 	FuncBinding.
 								Create<bool, Color>("IsRunning", (x) => x ?
@@ -124,21 +158,23 @@ namespace LegendDrive
 								  Constraint.RelativeToParent((parent) => 0),
 								  Constraint.RelativeToParent((parent) => parent.Width),
 								  Constraint.RelativeToParent((parent) => parent.Height));
+			relative.GestureRecognizers.Add(tapRecognizer);
+			//relative.GestureRecognizers.Add(panRecognizer);
 
+			//var frame = new Frame()
+			//{
+			//	Padding = new Thickness(0),
+			//	Margin = new Thickness(2),
+			//	HorizontalOptions = LayoutOptions.FillAndExpand,
+			//	VerticalOptions = LayoutOptions.FillAndExpand,
+			//	Content = relative,
+			//	BindingContext = counter
 
-			var frame = new Frame()
-			{
-				Padding = new Thickness(2),
-				Margin = new Thickness(2),
-				HorizontalOptions = LayoutOptions.FillAndExpand,
-				VerticalOptions = LayoutOptions.FillAndExpand,
-				Content = relative,
-				BindingContext = counter
+			//};
+			//frame.GestureRecognizers.Add(tapRecognizer);
+			//frame.SetBinding(VisualElement.BackgroundColorProperty, FuncBinding.Create(".", counterColorFunc));
 
-			};
-			frame.SetBinding(VisualElement.BackgroundColorProperty, FuncBinding.Create(".", counterColorFunc));
-
-			return frame;
+			return relative;
 		}
 	}
 }

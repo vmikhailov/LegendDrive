@@ -2,10 +2,11 @@
 using Android.Locations;
 using Android.OS;
 using Android.Runtime;
+using LegendDrive.Messaging;
 using LegendDrive.Model;
 using Xamarin.Forms;
 
-namespace LegendDrive.Droid
+namespace LegendDrive.Droid.Services
 {
 	public class LocationService: Java.Lang.Object, ILocationListener, GpsStatus.IListener
 	{
@@ -15,7 +16,7 @@ namespace LegendDrive.Droid
 		public LocationService(LocationManager manager)
 		{
 			_locationManager = manager;
-			MessagingCenter.Subscribe<GlobalCommand>(this, "global", (cmd) => ProcessCommand(cmd));
+			MessagingHub.Subscribe<GlobalCommand>(this, QueueType.Global, (cmd) => ProcessCommand(cmd));
 		}
 
 		public void Init()
@@ -63,12 +64,12 @@ namespace LegendDrive.Droid
 		public void OnLocationChanged(Location location)
 		{
 			if (location == null) return;
-			MessagingCenter.Send(LocationData.CreateFrom(location), "raceEvent_NewLocation");
+			MessagingHub.Send(QueueType.Location, LocationData.CreateFrom(location));
 		}
 
 		public void OnProviderDisabled(string provider)
 		{
-			MessagingCenter.Send(LocationData.Offline, "raceEvent_NewLocation");
+			MessagingHub.Send(QueueType.Location, LocationData.Offline);
 		}
 
 		public void OnProviderEnabled(string provider)
@@ -76,7 +77,7 @@ namespace LegendDrive.Droid
 			if (_providerName == provider)
 			{
 				var location = _locationManager.GetLastKnownLocation(provider);
-				MessagingCenter.Send(LocationData.CreateFrom(location), "raceEvent_NewLocation");
+				MessagingHub.Send(QueueType.Location, LocationData.CreateFrom(location));
 			}
 		}
 

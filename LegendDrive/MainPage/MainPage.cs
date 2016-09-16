@@ -1,3 +1,4 @@
+using LegendDrive.Messaging;
 using LegendDrive.Model;
 using Xamarin.Forms;
 
@@ -22,28 +23,31 @@ namespace LegendDrive
 
 			Content = grid;
 
-			var b = new Button
-			{
-				Text = "sdadasadsdasd",
-				WidthRequest = 300,
-				HeightRequest = 300
-			};
+			MessagingHub.Subscribe<GlobalCommand>(this, QueueType.AskConfirmation, (cmd) => ProcessCommand(cmd));
+			MessagingHub.Subscribe<string>(this, QueueType.Gesture, (msg) => ShowMessage(msg));
+			//Navigation.PushModalAsync(cp);
+		}
 
-			var s = new StackLayout()
+		private async void ProcessCommand(GlobalCommand cmd)
+		{
+			if (cmd.Code == GlobalCommandCodes.AskConfirmation)
 			{
-				Children =
+				var answer = await DisplayAlert("Alert", cmd.Message, "Yes", "No");
+				//var answer = await DisplayAlert("Alert", cmd.Message, "Yes", "No");
+				if (answer)
 				{
-					b
+					MessagingHub.Send(QueueType.Confirmed, GlobalCommand.ReplyConfirmation(cmd.CommandToConfirm));
 				}
-			};
+				else
+				{
+					MessagingHub.Send(QueueType.Canceled, GlobalCommand.ReplyConfirmation(cmd.CommandToConfirm));
+				}
+			}
+		}
 
-			var cp = new ContentPage()
-			{
-				Content = b
-			};
-			b.Clicked += (sender, e) => { Navigation.PopModalAsync(true); };
-
-			Navigation.PushModalAsync(cp);
+		void ShowMessage(string msg)
+		{
+			DisplayAlert("Message", msg, "Cancel");
 		}
 	}
 }

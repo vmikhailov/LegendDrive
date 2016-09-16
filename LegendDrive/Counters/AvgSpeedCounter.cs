@@ -61,7 +61,7 @@ namespace LegendDrive.Counters
 
 				//going from last to first
 				var node = _samples.Last;
-				var t1 = DateTime.Now;
+				var t1 = DateTime.Now.ToUniversalTime();
 				//...*(v1)....*(v2)....*(v3)....now
 				//v(now-t3) == 0
 				//v(t3-t2) == v3

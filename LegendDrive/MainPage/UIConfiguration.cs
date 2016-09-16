@@ -14,12 +14,12 @@ namespace LegendDrive
 		public const int LargeButtonHeight = 64 + 8;
 		public const int LargeButtonFontSize = LargeButtonHeight / 5;
 		public const int SegmentListNoFontSize = (int)(ButtonFontSize * 0.5);
-		public const int SegmentListDistanceFontSize = (int)(ButtonFontSize * 0.7);
+		public const int SegmentListLengthFontSize = (int)(ButtonFontSize * 0.7);
 		public const int SegmentListSpeedFontSize = (int)(ButtonFontSize * 0.7);
 		public const int SegmentListTimeoutFontSize = (int)(ButtonFontSize * 0.5);
 
 		public const int SegmentListNoSize = (int)(ButtonWidth * 0.5);
-		public const int SegmentListDistanceSize = (int)(ButtonWidth * 1);
+		public const int SegmentListLengthSize = (int)(ButtonWidth * 1.2);
 		public const int SegmentListSpeedSize = (int)(ButtonWidth * 0.7);
 		public const int SegmentListTimeoutSize = (int)(ButtonWidth * 0.6);
 

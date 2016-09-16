@@ -3,16 +3,18 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
 using LegendDrive.Counters.Interfaces;
+using LegendDrive.Persistance;
+using Newtonsoft.Json.Linq;
 
 namespace LegendDrive.Counters
 {
 	[DebuggerDisplay("{Name} = {ValueString}")]
-	public abstract class BaseCounter<T> : BaseBindingObject, IRaceCounter<T>, IDisposable
+	public abstract class BaseCounter<T> : BaseBindingObject, IRaceCounter<T>, IDisposable, ISupportStatePersistance 
 	{
 		private string _name;
 		private bool _important;
 		private bool _critical;
-		private bool _started;
+		private bool _running;
 		private CounterSize _size;
 		private CounterColor _color;
 		private Timer _timer;
@@ -127,19 +129,19 @@ namespace LegendDrive.Counters
 
 		public virtual bool IsRunning
 		{
-			get { return _started; }
+			get { return _running; }
 		}
 
 		public virtual void Start()
 		{
 			EnsureInitialized();
-			_started = true;
+			_running = true;
 			OnPropertyChanged("IsRunning");
 		}
 
 		public virtual void Stop()
 		{
-			_started = false;
+			_running = false;
 			OnPropertyChanged("IsRunning");
 		}
 
@@ -158,6 +160,19 @@ namespace LegendDrive.Counters
 		{
 			_critical = value;
 			OnPropertyChanged("IsCritical");
+		}
+
+		public virtual JObject GetState()
+		{
+			var obj = new JObject();
+			obj.AddValue(nameof(_running), _running);
+			return obj;
+		}
+
+		public virtual void LoadState(JObject obj)
+		{
+			_running = obj.GetValue<bool>(nameof(_running));
+			OnPropertyChanged("IsRunning");
 		}
 	}
 	

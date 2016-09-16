@@ -13,8 +13,6 @@ namespace LegendDrive
 		GlobalModel model;
 		string stateFile = "LegendDriveState.json";
 		string stateFileFullName;
-		string startUpTmp = "LegendDriveStartup.json";
-		string startUpFlagFullName;
 		Simulator simulator; 
 		Timer _timer;
 
@@ -22,29 +20,12 @@ namespace LegendDrive
 		public App()
 		{
 			stateFileFullName = Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.Personal), stateFile);
-			startUpFlagFullName = Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.Personal), startUpTmp);
 
 			model = new GlobalModel();
 			MainPage = new MainPage(model);
-			simulator = new Simulator(model);
-
-			simulator.Start();
+			//simulator = new Simulator(model);
+			//simulator.Start();
 			_timer = new Timer(x => SaveState(), this, 15000, 15000); 
-		}
-
-		bool PreviousStartFailed()
-		{
-			return new FileInfo(startUpFlagFullName).Exists;
-		}
-
-		void CreateStartFlag()
-		{
-			File.WriteAllText(startUpFlagFullName, DateTime.Now.ToString());
-		}
-
-		void DeleteStartFlag()
-		{
-			new FileInfo(startUpFlagFullName).Delete();
 		}
 
 		void DeleteState()

@@ -2,10 +2,15 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 using LegendDrive.Counters.Interfaces;
+using LegendDrive.Persistance;
+using Newtonsoft.Json.Linq;
 
 namespace LegendDrive.Counters
 {
-	public abstract class BaseDifferenceCounter<T> : BaseCounter<T>, IDifferenceCounter<T>
+	public abstract class BaseDifferenceCounter<T> : 
+		BaseCounter<T>, 
+		IDifferenceCounter<T>, 
+		ISupportStatePersistance 
 	{
 		T _base;
 		IRaceCounter<T> _baseCounter;
@@ -25,13 +30,12 @@ namespace LegendDrive.Counters
 			{
 				if (IsRunning)
 				{
-
 					EnsureInitialized();
 					return _difference;
 				}
 				else
 				{
-					return default(T);
+					return _difference;
 				}
 			}
 		}
@@ -84,6 +88,21 @@ namespace LegendDrive.Counters
 				notify.PropertyChanged += (sender, e) => Recalc();
 			}
 			Recalc();
+		}
+
+		public override JObject GetState()
+		{
+			var obj = new JObject();
+			obj.AddValue("base", base.GetState());
+			obj.AddValue(nameof(_difference), _difference);
+			return obj;
+		}
+
+		public override void LoadState(JObject obj)
+		{
+			_difference = obj.GetValue<T>(nameof(_difference));
+			base.LoadState(obj.GetValue<JObject>("base"));
+			OnPropertyChanged("Value");
 		}
 	}
 }
