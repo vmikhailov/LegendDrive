@@ -9,50 +9,13 @@ using Newtonsoft.Json.Linq;
 namespace LegendDrive.Counters
 {
 	public class TriggeredFuncCounter<TObject, TResult> : 
-		BaseCounter<TResult>, 
-		ITriggeredFuncCounter<TObject, TResult>,
-	 	ISupportStatePersistance
+		BaseCalculatedCounter<TResult>, 
+		ITriggeredFuncCounter<TObject, TResult>
 		where TObject : INotifyPropertyChanged
 	{
 		IDictionary<object, List<string>> triggers = new Dictionary<object, List<string>>();
-		TResult value;
 		Func<TObject, TResult> getter;
 		string format = "#,0";
-
-		public override string ValueString
-		{
-			get
-			{
-				if (typeof(TResult) == typeof(double) || typeof(TResult) == typeof(double?))
-				{
-					var doubleValue = Convert.ToDouble(value);
-					return doubleValue.ToString(format, NumberFormatInfo);
-				}
-				if (typeof(TResult) == typeof(TimeSpan))
-				{
-					var ts = (TimeSpan)Value;
-					return string.Format(@"{1}{0:hh\:mm\:ss}", ts, ts.TotalSeconds < 0 ? "-" : "");
-				}
-				else
-				{
-					return string.Format(format, Value);
-				}
-			}
-		}
-
-		public override TResult TypedValue
-		{
-			get
-			{
-				EnsureInitialized();
-				return value;
-			}
-		}
-
-		public TObject BindingContext
-		{
-			get; set;
-		}
 
 		public TriggeredFuncCounter(string name)
 			: base(name)
@@ -65,10 +28,37 @@ namespace LegendDrive.Counters
 			this.format = format;
 		}
 
+		public override string ValueString
+		{
+			get
+			{
+				if (typeof(TResult) == typeof(double) || typeof(TResult) == typeof(double?))
+				{
+					var doubleValue = Convert.ToDouble(Value);
+					return doubleValue.ToString(format, NumberFormatInfo);
+				}
+				if (typeof(TResult) == typeof(TimeSpan))
+				{
+					var ts = (TimeSpan)ValueObject;
+					return string.Format(@"{1}{0:hh\:mm\:ss}", ts, ts.TotalSeconds < 0 ? "-" : "");
+				}
+				else
+				{
+					return string.Format(format, ValueObject);
+				}
+			}
+		}
+
+		public TObject BindingContext
+		{
+			get; set;
+		}
+
 		public void BindTo(TObject value, Func<TObject, TResult> getter) 
 		{
 			this.getter = getter;
 			this.BindingContext = value;
+			Invalidate();
 		}
 
 		public void AddTrigger(string properties, INotifyPropertyChanged obj)
@@ -76,6 +66,7 @@ namespace LegendDrive.Counters
 			var listOfproperties = properties.Split(',').Select(x => x.Trim()).ToList();
 			triggers[obj] = listOfproperties;
 			obj.PropertyChanged += Value_PropertyChanged;
+			Invalidate();
 		}
 
 		void Value_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -85,37 +76,25 @@ namespace LegendDrive.Counters
 
 			if (triggers[sender].Contains(e.PropertyName))
 			{
-				this.value = getter(BindingContext);
-				if (AfterNewValue != null) AfterNewValue(this);
-				OnPropertyChanged("Value");
+				Invalidate();
 			}
 		}
 
-		public override void Reset()
+		protected override void Invalidate()
 		{
-			base.Reset();
-			OnPropertyChanged("Value");
+			base.Invalidate();
+			if (AfterNewValue != null) AfterNewValue(this);
+		}
+
+		protected override TResult Calculate()
+		{
+			return getter(BindingContext);
 		}
 
 		public Action<ITriggeredFuncCounter<TObject, TResult>> AfterNewValue
 		{
 			get;
 			set;
-		}
-
-		public override JObject GetState()
-		{
-			var obj = new JObject();
-			obj.AddValue("base", base.GetState());
-			obj.AddValue(nameof(value), value);
-			return obj;
-		}
-
-		public override void LoadState(JObject obj)
-		{
-			value = obj.GetValue<TResult>(nameof(value));
-			base.LoadState(obj.GetValue<JObject>("base"));
-			OnPropertyChanged("Value");
 		}
 	}
 }

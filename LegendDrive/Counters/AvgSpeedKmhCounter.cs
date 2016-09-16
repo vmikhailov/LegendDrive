@@ -21,7 +21,7 @@ namespace LegendDrive.Counters
 		{
 			get 
 			{
-				var rounded = Math.Round(TypedValue, 1);
+				var rounded = Math.Round(Value, 1);
 				string valueStr;
 				if (rounded < 10)
 				{
@@ -35,11 +35,11 @@ namespace LegendDrive.Counters
 			}
 		}
 
-		public override double TypedValue
+		public override double Value
 		{
 			get
 			{
-				return base.TypedValue * 3.6;
+				return base.Value * 3.6;
 			}
 		}
 	}

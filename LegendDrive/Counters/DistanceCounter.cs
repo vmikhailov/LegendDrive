@@ -12,14 +12,9 @@ namespace LegendDrive.Counters
 {
 	public class DistanceCounter : BaseCounter<double?>, ILocationProcessor, ISupportHistory, ISupportStatePersistance
 	{
-		double? _distance;
-		double _smoothIncrement;
-		LocationData _previousLocation;
-		Stack<double?> _history;
-		Timer _timer;
-
-		int periodOfUpdate = 1100; //ms
-		int periodOfSmoothUpdate = 100;
+		double? distance;
+		LocationData previousLocation;
+		Stack<double?> history;
 
 		public DistanceCounter():this("Distance")
 		{
@@ -27,32 +22,20 @@ namespace LegendDrive.Counters
 
 		public DistanceCounter(string name):base(name)
 		{
-			_history = new Stack<double?>();
-			//_timer = new Timer(x => SmoothValueUpdate(), null, 0, periodOfSmoothUpdate);
-		}
-
-		void SmoothValueUpdate()
-		{
-			var currentSpeed = _previousLocation?.Speed ?? 0;
-			_smoothIncrement += periodOfSmoothUpdate * currentSpeed / periodOfUpdate;
-			if(_distance.HasValue && 
-			   Math.Round(_distance.Value + _smoothIncrement,0 ) > Math.Round(_distance.Value, 0))
-			{
-				OnPropertyChanged("Value");
-			}
+			history = new Stack<double?>();
 		}
 
 		public override string ValueString
 		{
-			get { return TypedValue?.ToString("#,0", NumberFormatInfo); }
+			get { return Value?.ToString("#,0", NumberFormatInfo); }
 		}
 
-		public override double? TypedValue
+		public override double? Value
 		{
 			get 
 			{
 				EnsureInitialized();
-				return _distance + _smoothIncrement; 
+				return distance; 
 			}
 		}
 
@@ -62,36 +45,35 @@ namespace LegendDrive.Counters
 			//location = location.RoundCoords();
 			if (IsRunning)
 			{
-				if (_previousLocation != null)
+				if (previousLocation != null)
 				{
-					var delta = location.DistanceTo(_previousLocation);
-					_distance += delta;
-					_smoothIncrement = 0;
+					var delta = location.DistanceTo(previousLocation);
+					distance += delta;
 					OnPropertyChanged("Value");
 				}
 			}
-			_previousLocation = location;
+			previousLocation = location;
 		}
 
 		public override void Reset()
 		{
-			_distance = 0;
-			_history.Clear();
+			distance = 0;
+			history.Clear();
 			OnPropertyChanged("Value");
 		}
 
 		public void Push()
 		{
-			_history.Push(_distance);
-			_distance = 0;
+			history.Push(distance);
+			distance = 0;
 			OnPropertyChanged("Value");
 		}
 
 		public void Pop()
 		{
-			if (_history.Any())
+			if (history.Any())
 			{
-				_distance = _distance + _history.Pop();
+				distance = distance + history.Pop();
 				OnPropertyChanged("Value");
 			}
 		}
@@ -100,15 +82,15 @@ namespace LegendDrive.Counters
 		{
 			var obj = new JObject();
 			obj.AddValue("base", base.GetState());
-			obj.AddValue(nameof(_distance), _distance);
-			obj.AddValue(nameof(_history), _history);
+			obj.AddValue(nameof(distance), distance);
+			obj.AddValue(nameof(history), history);
 			return obj;
 		}
 
 		public override void LoadState(JObject obj)
 		{
-			_distance = obj.GetValue<double?>(nameof(_distance));
-			_history = obj.GetValue<Stack<double?>>(nameof(_history));
+			distance = obj.GetValue<double?>(nameof(distance));
+			history = obj.GetValue<Stack<double?>>(nameof(history));
 			base.LoadState(obj.GetValue<JObject>("base"));
 			OnPropertyChanged("Value");
 		}
@@ -116,7 +98,6 @@ namespace LegendDrive.Counters
 		public override void Dispose()
 		{
 			base.Dispose();
-			if (_timer != null) _timer.Dispose();
 		}
 	}
 }

@@ -18,28 +18,23 @@ namespace LegendDrive.Counters
 
 		public override string ValueString
 		{
-			get { return TypedValue?.ToString("#,0", NumberFormatInfo); }
+			get { return Value?.ToString("#,0", NumberFormatInfo); }
 		}
 
-		protected override void Recalc()
+		protected override double? Calculate()
 		{
-			base.Recalc();
+			var x = base.Calculate();
+
+			return x;
+		}
+
+		protected override void OnValueChanged()
+		{
 			if (IsRunning)
 			{
-				SetImportant(TypedValue < 100);
-				SetCritical(TypedValue <= 0);
+				SetImportant(Value < 100);
+				SetCritical(Value <= 0);
 			}
-		}
-
-		public override void Start()
-		{
-			base.Start();
-
-		}
-
-		public override void Reset()
-		{
-			Recalc();
 		}
 
 		protected override double? Subtract(double? v1, double? v2)

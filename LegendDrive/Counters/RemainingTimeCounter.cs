@@ -15,16 +15,22 @@ namespace LegendDrive.Counters
 
 		public override string ValueString
 		{
-			get { return string.Format(@"{1}{0:hh\:mm\:ss}", TypedValue, TypedValue?.TotalMilliseconds < 0?"-":""); }
+			get { return string.Format(@"{1}{0:hh\:mm\:ss}", Value, Value?.TotalMilliseconds < 0?"-":""); }
 		}
 
-		protected override void Recalc()
+		protected override TimeSpan? Calculate()
 		{
-			base.Recalc();
+			var x = base.Calculate();
+
+			return x;
+		}
+
+		protected override void OnValueChanged()
+		{
 			if (IsRunning)
 			{
-				SetImportant(TypedValue?.TotalSeconds <= 10);
-				SetCritical(TypedValue?.TotalSeconds <= 0);
+				SetImportant(Value.GetValueOrDefault().TotalSeconds <= 10);
+				SetCritical(Value.GetValueOrDefault().TotalSeconds <= 0);
 			}
 		}
 

@@ -5,7 +5,7 @@ namespace LegendDrive.Counters
 {
 	public class CurrentTimeCounter : BaseCounter<DateTime>
 	{
-		private Timer _timer;
+		private Timer timer;
 
 		public CurrentTimeCounter() : this("Current time")
 		{
@@ -14,7 +14,7 @@ namespace LegendDrive.Counters
 		public CurrentTimeCounter(string name)
 			: base(name)
 		{
-			_timer = new Timer(x => OnPropertyChanged("Value"), null, 0, 1000);
+			timer = new Timer(x => OnPropertyChanged("Value"), null, 0, 1000);
 		}
 
 		public override bool IsRunning
@@ -35,14 +35,14 @@ namespace LegendDrive.Counters
 
 		public override string ValueString
 		{
-			get { return string.Format(@"{0:H\:mm\:ss}", Value); }
+			get { return string.Format(@"{0:H\:mm\:ss}", ValueObject); }
 		}
 
-		public override DateTime TypedValue
+		public override DateTime Value
 		{
 			get 
 			{
-				EnsureInitialized();
+				//EnsureInitialized();
 				return DateTime.Now; 
 			}
 		}
@@ -50,7 +50,7 @@ namespace LegendDrive.Counters
 		public override void Dispose()
 		{
 			base.Dispose();
-			if (_timer != null) _timer.Dispose();
+			if (timer != null) timer.Dispose();
 		}
 	}
 }

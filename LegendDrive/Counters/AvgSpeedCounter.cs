@@ -7,12 +7,10 @@ using Newtonsoft.Json.Linq;
 
 namespace LegendDrive.Counters
 {
-	public class AvgSpeedCounter : BaseCounter<double>, ILocationProcessor
+	public class AvgSpeedCounter : BaseCalculatedCounter<double>, ILocationProcessor
 	{
-		LinkedList<LocationData> _samples;
-		Timer _timer;
-		double _value;
-		int _lastEventFire; 
+		LinkedList<LocationData> samples;
+		int calccount;
 
 		public AvgSpeedCounter() : this("AvgSpeed", 10)
 		{
@@ -26,8 +24,7 @@ namespace LegendDrive.Counters
 			:base(name)
 		{
 			DurationOfCalculation = duration;
-			_samples = new LinkedList<LocationData>();
-			_timer = new Timer(x => FireOnValueChanged(), null, 0, 100);
+			samples = new LinkedList<LocationData>();
 		}
 
 		public long DurationOfCalculation
@@ -38,29 +35,19 @@ namespace LegendDrive.Counters
 
 		public override string ValueString
 		{
-			get { return string.Format("{0:F0} m/s", TypedValue); }
+			get { return string.Format("{0:F0} m/s", Value); }
 		}
 
-
-		public override double TypedValue
-		{
-			get
-			{
-				EnsureInitialized();
-				return _value;
-				//return _samples.Count/3.6;
-			}
-		}
-
-		protected void Calc()
+		protected override double Calculate()
 		{
 			lock(this)
 			{
+				calccount++;
 				double duration = 0;
 				double distance = 0;
 
 				//going from last to first
-				var node = _samples.Last;
+				var node = samples.Last;
 				var t1 = DateTime.Now.ToUniversalTime();
 				//...*(v1)....*(v2)....*(v3)....now
 				//v(now-t3) == 0
@@ -83,24 +70,14 @@ namespace LegendDrive.Counters
 				{
 					//we have reached max duration. need to clean up samples
 					node = node.Next;
-					while (_samples.First != node)
+					while (samples.First != node)
 					{
-						_samples.RemoveFirst();
+						samples.RemoveFirst();
 					}
 				}
 
-				_value = duration > 0 ? distance / duration : 0;
-			}
-		}
-
-		private void FireOnValueChanged()
-		{
-			var tick = System.Environment.TickCount/1000;
-			if ((tick - _lastEventFire) > 0)
-			{
-				Calc();
-				OnPropertyChanged("Value");
-				_lastEventFire = tick;
+				var value = duration > 0 ? distance / duration : 0;
+				return value;
 			}
 		}
 
@@ -111,25 +88,20 @@ namespace LegendDrive.Counters
 			{
 				lock(this)
 				{
-					_samples.AddLast(location);
+					samples.AddLast(location);
 				}
-				FireOnValueChanged();
+				Invalidate();
 			}
 		}
 
 		public override void Reset()
 		{
+			base.Reset();
 			lock(this)
 			{
-				_samples.Clear();
+				samples.Clear();
 			}
-			FireOnValueChanged();
-		}
-
-		public override void Dispose()
-		{
-			base.Dispose();
-			if(_timer !=null) _timer.Dispose();
+			Invalidate();
 		}
 	}
 }

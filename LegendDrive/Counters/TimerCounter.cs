@@ -10,10 +10,10 @@ namespace LegendDrive.Counters
 {
 	public class TimerCounter : BaseCounter<TimeSpan?>, ISupportHistory, ISupportStatePersistance
 	{
-		private Timer _timer;
-		private long _elapsed;
-		private int _accuracy = 500;
-		Stack<long> _history;
+		private Timer timer;
+		private long elapsed;
+		private int accuracy = 500;
+		Stack<long> history;
 
 		public TimerCounter() : this("Timer")
 		{
@@ -22,21 +22,21 @@ namespace LegendDrive.Counters
 		public TimerCounter(string name)
 			: base(name)
 		{
-			_timer = new Timer(x => NewTick(), null, 0, _accuracy);
-			_history = new Stack<long>();
+			timer = new Timer(x => NewTick(), null, 0, accuracy);
+			history = new Stack<long>();
 		}
 
 		public override string ValueString
 		{
-			get { return string.Format(@"{0:hh\:mm\:ss}", TypedValue); }
+			get { return string.Format(@"{0:hh\:mm\:ss}", Value); }
 		}
 
-		public override TimeSpan? TypedValue
+		public override TimeSpan? Value
 		{
 			get
 			{
 				EnsureInitialized();
-				return TimeSpan.FromMilliseconds(_elapsed);
+				return TimeSpan.FromMilliseconds(elapsed);
 			}
 		}
 
@@ -44,35 +44,35 @@ namespace LegendDrive.Counters
 		{
 			if (IsRunning)
 			{
-				_elapsed += _accuracy;
+				elapsed += accuracy;
 			}
 			OnPropertyChanged("Value");
 		}
 
 		public override void Reset()
 		{
-			_elapsed = 0;
-			_history.Clear();
+			elapsed = 0;
+			history.Clear();
 		}
 
 		public override void Dispose()
 		{
 			base.Dispose();
-			if (_timer != null) _timer.Dispose();
+			if (timer != null) timer.Dispose();
 		}
 
 		public void Push()
 		{
-			_history.Push(_elapsed);
-			_elapsed = 0;
+			history.Push(elapsed);
+			elapsed = 0;
 			OnPropertyChanged("Value");
 		}
 
 		public void Pop()
 		{
-			if (_history.Any())
+			if (history.Any())
 			{
-				_elapsed = _elapsed + _history.Pop();
+				elapsed = elapsed + history.Pop();
 				OnPropertyChanged("Value");
 			}
 		}
@@ -81,15 +81,15 @@ namespace LegendDrive.Counters
 		{
 			var obj = new JObject();
 			obj.AddValue("base", base.GetState());
-			obj.AddValue(nameof(_elapsed), _elapsed);
-			obj.AddValue(nameof(_history), _history);
+			obj.AddValue(nameof(elapsed), elapsed);
+			obj.AddValue(nameof(history), history);
 			return obj;
 		}
 
 		public override void LoadState(JObject obj)
 		{
-			_elapsed = obj.GetValue<long>(nameof(_elapsed));
-			_history = obj.GetValue<Stack<long>>(nameof(_history));
+			elapsed = obj.GetValue<long>(nameof(elapsed));
+			history = obj.GetValue<Stack<long>>(nameof(history));
 			base.LoadState(obj.GetValue<JObject>("base"));
 			OnPropertyChanged("Value");
 		}

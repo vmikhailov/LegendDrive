@@ -101,7 +101,7 @@ namespace LegendDrive
 
 			var l1 = new Label()
 			{
-				TextColor = Color.White,
+				TextColor = UIConfiguration.CounterColors[CounterColor.White],
 				HorizontalOptions = LayoutOptions.StartAndExpand,
 				Margin = new Thickness(5, 0, 0, 0),
 				FontSize = 15,
@@ -114,7 +114,7 @@ namespace LegendDrive
 
 			var l2 = new Label()
 			{
-				TextColor = Color.White,
+				TextColor = UIConfiguration.CounterColors[CounterColor.White],
 				HorizontalOptions = LayoutOptions.Center,
 				VerticalOptions = LayoutOptions.Center,
 				Margin = new Thickness(0,10,0,0),

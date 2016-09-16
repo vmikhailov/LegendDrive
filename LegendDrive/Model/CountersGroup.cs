@@ -162,7 +162,7 @@ namespace LegendDrive.Model
 				x.BindTo(model.Race, y =>
 				{
 					return y.Segments.TakeWhile(z => z.Passed).Sum(z => z.Distance)
-							+ segmentDistance.TypedValue;
+							+ segmentDistance.Value;
 				});
 				x.AddTrigger(".", model.Race);
 				x.AddTrigger("Value", segmentDistance);
@@ -178,7 +178,7 @@ namespace LegendDrive.Model
 			//SPEED (6)
 			var raceAverageSpeed = new AvgSpeedKmhCounter("Avg race speed", 86400);
 			var segmentAvgSpeed = new AvgSpeedKmhCounter("Avg segment speed", 86400);
-			var segmentFiveSecondsSpeed = new AvgSpeedKmhCounter("Current speed", 10)
+			var segmentFiveSecondsSpeed = new AvgSpeedKmhCounter("Current speed", 5)
 			{
 				Size = CounterSize.XXL,
 				Color = CounterColor.Green
@@ -190,12 +190,12 @@ namespace LegendDrive.Model
 				{
 					if (y.IsRunning)
 					{
-						var timerFromStart = raceTimer.TypedValue;
+						var timerFromStart = raceTimer.Value;
 						var timerAtEndOfSegment = y.TimeOffsetAtTheEndOfCurrentSegment;
 						var timeLeft = timerAtEndOfSegment - timerFromStart;
-						var remainingRaceTimeSeconds = raceRemainingTime.TypedValue.GetValue().TotalSeconds;
+						var remainingRaceTimeSeconds = raceRemainingTime.Value.GetValue().TotalSeconds;
 						if (timeLeft?.TotalSeconds <= 1) return remainingRaceTimeSeconds > 0 ? 1000 : 0;
-						var distanceLeft = y.CurrentSegment?.Distance - segmentDistance?.TypedValue;
+						var distanceLeft = y.CurrentSegment?.Distance - segmentDistance?.Value;
 						var speed = distanceLeft / timeLeft?.TotalSeconds * 3.6;
 						if (speed >= 90) return 1000;
 						if (speed <= 1) return 0;
@@ -213,7 +213,7 @@ namespace LegendDrive.Model
 				x.BindTo(model.Race, y =>
 				{
 					if (!y.IsRunning) return "0";
-					var speed = Convert.ToInt32(recommendedSpeed.TypedValue);
+					var speed = Convert.ToInt32(recommendedSpeed.Value);
 					if (speed == 1000) return "MAX";
 					if (speed == 0) return "STOP";
 					return speed.ToString();
@@ -224,13 +224,13 @@ namespace LegendDrive.Model
 				x.SetImportant(true);
 				x.AfterNewValue = y =>
 				{
-					var speed = (int)recommendedSpeed.TypedValue.GetValue();
+					var speed = (int)recommendedSpeed.Value.GetValue();
 					if (speed == 0 || speed == 1000)
 					{
 						x.SetCritical(true);
 						return;
 					}
-					var avgSpeed = segmentFiveSecondsSpeed.TypedValue;
+					var avgSpeed = segmentFiveSecondsSpeed.Value;
 					var rel = avgSpeed > 0.5 ? Math.Abs(speed / avgSpeed) : 1000;
 					x.SetImportant(rel > 1.5 || rel < 0.75);
 					x.SetCritical(rel > 2 || rel < 1 / 2);
@@ -242,9 +242,9 @@ namespace LegendDrive.Model
 			{
 				x.BindTo(model.Race, y =>
 				{
-					var speed = segmentFiveSecondsSpeed.TypedValue;//segmentFiveSecondsSpeed.TypedValue;
-					var timerFromStart = raceTimer.TypedValue;
-					var distanceLeft = y.CurrentSegment?.Distance - segmentDistance?.TypedValue;
+					var speed = segmentFiveSecondsSpeed.Value;//segmentFiveSecondsSpeed.TypedValue;
+					var timerFromStart = raceTimer.Value;
+					var distanceLeft = y.CurrentSegment?.Distance - segmentDistance?.Value;
 
 					if (speed <= 0.5 || !timerFromStart.HasValue || !distanceLeft.HasValue) return TimeSpan.FromMinutes(30);
 					var timeToEndOfSeg = distanceLeft.Value / speed * 3.6; //relative time TO End Of Segment With Current Speed
@@ -267,7 +267,7 @@ namespace LegendDrive.Model
 				x.SetCritical(false);
 				x.AfterNewValue = y =>
 				{
-					var seconds = Math.Abs(y.TypedValue.TotalSeconds);
+					var seconds = Math.Abs(y.Value.TotalSeconds);
 					x.SetImportant(seconds > 30);
 					x.SetCritical(seconds > 60);
 				};

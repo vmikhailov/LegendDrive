@@ -8,101 +8,60 @@ using Newtonsoft.Json.Linq;
 namespace LegendDrive.Counters
 {
 	public abstract class BaseDifferenceCounter<T> : 
-		BaseCounter<T>, 
+		BaseCalculatedCounter<T>,
 		IDifferenceCounter<T>, 
 		ISupportStatePersistance 
 	{
-		T _base;
-		IRaceCounter<T> _baseCounter;
+		T baseValue;
+		IRaceCounter<T> baseCounter;
 
-		T _target;
-		IRaceCounter<T> _targetCounter;
-
-		T _difference;
+		T target;
+		IRaceCounter<T> targetCounter;
 
 		public BaseDifferenceCounter(string name):base(name)
 		{
 		}
 
-		public override T TypedValue
+		protected override T Calculate()
 		{
-			get
-			{
-				if (IsRunning)
-				{
-					EnsureInitialized();
-					return _difference;
-				}
-				else
-				{
-					return _difference;
-				}
-			}
-		}
-
-		protected virtual void Recalc()
-		{
-			if (IsRunning)
-			{
-				var baseValue = _baseCounter != null ? _baseCounter.TypedValue : _base;
-				var targetValue = _targetCounter != null ? _targetCounter.TypedValue : _target;
-				_difference = Subtract(targetValue, baseValue);
-				OnPropertyChanged("Value");
-			}
+			var bv = baseCounter != null ? baseCounter.Value : baseValue;
+			var tv = targetCounter != null ? targetCounter.Value : target;
+			return Subtract(tv, bv);
 		}
 
 		protected abstract T Subtract(T v1, T v2);
 
-		public override void Reset()
-		{
-			Recalc();
-		}
-
 		public void SetTarget(T value)
 		{
-			_target = value;
+			target = value;
+			Invalidate();
 		}
 
 		public void SetTarget(IRaceCounter<T> counter)
 		{
-			_targetCounter = counter;
-			if (_targetCounter is INotifyPropertyChanged)
+			targetCounter = counter;
+			if (targetCounter is INotifyPropertyChanged)
 			{
-					var notify = _targetCounter as INotifyPropertyChanged;
-					notify.PropertyChanged += (sender, e) => Recalc();
+				var notify = targetCounter as INotifyPropertyChanged;
+				notify.PropertyChanged += (sender, e) => Invalidate();
 			}
-			Recalc();
 		}
 
 		public void SetBase(T value)
 		{
-			_base = value;
+			baseValue = value;
+			Invalidate();
 		}
 
 		public void SetBase(IRaceCounter<T> counter)
 		{
-			_baseCounter = counter;
-			if (_baseCounter is INotifyPropertyChanged)
+			baseCounter = counter;
+			if (baseCounter is INotifyPropertyChanged)
 			{
-				var notify = _baseCounter as INotifyPropertyChanged;
-				notify.PropertyChanged += (sender, e) => Recalc();
+				var notify = baseCounter as INotifyPropertyChanged;
+				notify.PropertyChanged += (sender, e) => Invalidate();
 			}
-			Recalc();
-		}
-
-		public override JObject GetState()
-		{
-			var obj = new JObject();
-			obj.AddValue("base", base.GetState());
-			obj.AddValue(nameof(_difference), _difference);
-			return obj;
-		}
-
-		public override void LoadState(JObject obj)
-		{
-			_difference = obj.GetValue<T>(nameof(_difference));
-			base.LoadState(obj.GetValue<JObject>("base"));
-			OnPropertyChanged("Value");
+			Invalidate();
 		}
 	}
 }

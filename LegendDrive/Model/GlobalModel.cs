@@ -43,9 +43,16 @@ namespace LegendDrive.Model
 			switch (cmd.Code)
 			{
 				case GlobalCommandCodes.StartFinish:
-					if (Race.IsRunning && Race.Segments.LastOrDefault() != Race.CurrentSegment)
+					if (Race.IsRunning)
 					{
-						MessagingHub.Send(QueueType.AskConfirmation, GlobalCommand.AskConfirmation(cmd, "Do you really want to finish the race?"));
+						if (Race.Segments.LastOrDefault() != Race.CurrentSegment)
+						{
+							MessagingHub.Send(QueueType.AskConfirmation, GlobalCommand.AskConfirmation(cmd, "Do you really want to finish the race?"));
+						}
+						else
+						{
+							FinishRace();
+						}
 					}
 					else 
 					{

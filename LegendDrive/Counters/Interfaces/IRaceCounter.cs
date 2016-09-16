@@ -5,7 +5,7 @@ namespace LegendDrive.Counters.Interfaces
 	public interface IRaceCounter : INotifyPropertyChanged
 	{
 		string Name { get; }
-		object Value { get; }
+		object ValueObject { get; }
 		string ValueString { get; }
 
 		void Reset();
@@ -27,7 +27,7 @@ namespace LegendDrive.Counters.Interfaces
 
 	public interface IRaceCounter<T> : IRaceCounter
 	{
-		T TypedValue { get; }
+		T Value { get; }
 	}
 
 

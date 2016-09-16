@@ -9,28 +9,28 @@ using Newtonsoft.Json.Linq;
 namespace LegendDrive.Counters
 {
 	[DebuggerDisplay("{Name} = {ValueString}")]
-	public abstract class BaseCounter<T> : BaseBindingObject, IRaceCounter<T>, IDisposable, ISupportStatePersistance 
+	public abstract class BaseCounter<T> : BaseBindingObject, IRaceCounter<T>, IDisposable, ISupportStatePersistance
 	{
-		private string _name;
-		private bool _important;
-		private bool _critical;
-		private bool _running;
-		private CounterSize _size;
-		private CounterColor _color;
-		private Timer _timer;
-		private NumberFormatInfo _nfi;
-		private bool _initialized;
+		private string name;
+		private bool important;
+		private bool critical;
+		private bool running;
+		private CounterSize size;
+		private CounterColor color;
+		private Timer timer;
+		private NumberFormatInfo nfi;
+		private bool initialized;
 
 		protected BaseCounter(string name)
 		{
-			_name = name;
-			_nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
-			_nfi.NumberGroupSeparator = " ";
+			this.name = name;
+			nfi = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+			nfi.NumberGroupSeparator = " ";
 		}
 
 		protected NumberFormatInfo NumberFormatInfo
 		{
-			get { return _nfi; }
+			get { return nfi; }
 		}
 
 		public abstract string ValueString
@@ -38,19 +38,19 @@ namespace LegendDrive.Counters
 			get;
 		}
 
-		public object Value
+		public object ValueObject
 		{
-			get { return TypedValue; }
+			get { return Value; }
 		}
 
-		public abstract T TypedValue
+		public abstract T Value
 		{
 			get;
 		}
 
 		public virtual void Init()
 		{
-			_initialized = true;
+			initialized = true;
 		}
 
 		public void EnsureInitialized()
@@ -64,14 +64,14 @@ namespace LegendDrive.Counters
 
 		public virtual bool IsInitialized
 		{
-			get { return _initialized; }
+			get { return initialized; }
 		}
 
 		public string Name
 		{
 			get
 			{
-				return _name;
+				return name;
 			}
 		}
 
@@ -82,98 +82,114 @@ namespace LegendDrive.Counters
 
 		public void Flash(int msec)
 		{
-			if (_critical)
+			if (critical)
 			{
-				if (_timer != null) _timer.Dispose();
+				if (timer != null) timer.Dispose();
 			}
-			_critical = true;
-			OnPropertyChanged("IsCritical");
-			_timer = new Timer(TurnOffFlash, this, msec, 0);
+			SetCritical(true);
+			timer = new Timer(TurnOffFlash, this, msec, 0);
 		}
 
 		private void TurnOffFlash(object state)
 		{
-			_critical = false;
-			OnPropertyChanged("IsCritical");
+			SetCritical(false);
 		}
 
 		public virtual CounterSize Size
 		{
-			get { return _size; }
+			get { return size; }
 			set
 			{
-				_size = value;
-				OnPropertyChanged("Size");
+				if (size != value)
+				{
+					size = value;
+					OnPropertyChanged("Size");
+				}
 			}
 		}
 
 		public virtual CounterColor Color
 		{
-			get { return _color; }
+			get { return color; }
 			set
 			{
-				_color = value;
-				OnPropertyChanged("Color");
+				if (color != value)
+				{
+					color = value;
+					OnPropertyChanged("Color");
+				}
 			}
 		}
 
 		public virtual bool IsImportant
 		{
-			get { return _important; }
+			get { return important; }
 		}
 
 		public virtual bool IsCritical
 		{
-			get { return _critical; }
+			get { return critical; }
 		}
 
 		public virtual bool IsRunning
 		{
-			get { return _running; }
+			get { return running; }
 		}
 
 		public virtual void Start()
 		{
 			EnsureInitialized();
-			_running = true;
-			OnPropertyChanged("IsRunning");
+			if (!running)
+			{
+				running = true;
+				OnPropertyChanged("IsRunning");
+			}
 		}
 
 		public virtual void Stop()
 		{
-			_running = false;
-			OnPropertyChanged("IsRunning");
+			if (running)
+			{
+				running = false;
+				OnPropertyChanged("IsRunning");
+			}
 		}
 
 		public virtual void Dispose()
 		{
-			if (_timer != null) _timer.Dispose();
+			if (timer != null) timer.Dispose();
 		}
 
 		public void SetImportant(bool value)
 		{
-			_important = value;
-			OnPropertyChanged("IsImportant");
+			if (important != value)
+			{
+				important = value;
+				OnPropertyChanged("IsImportant");
+			}
 		}
 
 		public void SetCritical(bool value)
 		{
-			_critical = value;
-			OnPropertyChanged("IsCritical");
+			if (critical != value)
+			{
+				critical = value;
+				OnPropertyChanged("IsCritical");
+			}
 		}
 
 		public virtual JObject GetState()
 		{
 			var obj = new JObject();
-			obj.AddValue(nameof(_running), _running);
+			obj.AddValue(nameof(running), running);
 			return obj;
 		}
 
 		public virtual void LoadState(JObject obj)
 		{
-			_running = obj.GetValue<bool>(nameof(_running));
+			running = obj.GetValue<bool>(nameof(running));
 			OnPropertyChanged("IsRunning");
 		}
 	}
-	
+
 }

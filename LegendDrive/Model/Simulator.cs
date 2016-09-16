@@ -18,9 +18,9 @@ namespace LegendDrive.Model
 
 		public void Start()
 		{
-			model.Race.ParseAndAddNewSegments("441 35 271 30 348 15 210 20 410 13 760 30 870 35 860 40 1120 28 830 40 680 35 90 13 430 15 80 13 660 30 210 25 210 20");
-			model.Race.ParseAndAddNewSegments("210 8 5");
-			model.Race.ParseAndAddNewSegments("680 34 1540 30");
+			//model.Race.ParseAndAddNewSegments("441 35 271 30 348 15 210 20 410 13 760 30 870 35 860 40 1120 28 830 40 680 35 90 13 430 15 80 13 660 30 210 25 210 20");
+			//model.Race.ParseAndAddNewSegments("210 8 5");
+			//model.Race.ParseAndAddNewSegments("680 34 1540 30");
 
 			prevLoc = new LocationData()
 			{
@@ -50,10 +50,10 @@ namespace LegendDrive.Model
 			samples = ++samples % 60;
 
 
-			var targetSpeed = rspeed?.TypedValue;
-			targetSpeed = targetSpeed > 10 ? 10 : targetSpeed;
-
-			speed += targetSpeed > (speed + 0.5) ? 0.5 : (targetSpeed < (speed - 0.5) ? -0.5: 0);
+			var targetSpeed = rspeed?.Value;
+			targetSpeed = targetSpeed > 80 ? 80 : targetSpeed;
+			var delta = Math.Round(Math.Abs(targetSpeed.GetValueOrDefault() - speed),0);
+			speed += targetSpeed > (speed + delta/2) ? delta/2 : (targetSpeed < (speed - delta/2) ? -delta/2: 0);
 			//if (speed.HasValue)
 			//{
 			//	speed = speed > 80 ? 80 : speed;

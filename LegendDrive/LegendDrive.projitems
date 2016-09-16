@@ -55,6 +55,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Model\Simulator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Model\NullableExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\MessagingHub.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Counters\BaseCalculatedCounter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Model\" />
