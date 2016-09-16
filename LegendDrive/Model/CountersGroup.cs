@@ -62,7 +62,7 @@ namespace LegendDrive.Model
 			{
 				x.SetBase(raceTimer);
 				x.SetTarget(segmentTimer);
-				x.Size = CounterSize.L;
+				x.Size = CounterSize.XL;
 				//x.OnValueChanged += y =>
 				//{
 				//	if (y.TypedValue.GetValue().TotalSeconds < 10)
@@ -90,7 +90,7 @@ namespace LegendDrive.Model
 				x.BindTo(model, y =>
 				{
 					if (y.LastLocaton == null) return "N/A";
-					return string.Format("Lat = {0:F5}\nLon = {1:F5}\nAcc = {2:F3} Spd = {3:F1} {4}",
+					return string.Format("Lat = {0:F5}\nLon = {1:F5}\nAcc = {2:F3}\nSpd = {3:F1} {4}",
 										 y.LastLocaton.Latitude,
 										 y.LastLocaton.Longitude,
 										 y.LastLocaton.Accuracy,
@@ -99,7 +99,7 @@ namespace LegendDrive.Model
 				});
 				x.AddTrigger("LastLocation", model);
 				x.AddTrigger("Value", globalCurrentTime);
-				x.Size = CounterSize.S;
+				x.Size = CounterSize.XS;
 				x.AfterNewValue = y =>
 				{
 					var loc = y.BindingContext.LastLocaton;
@@ -262,7 +262,7 @@ namespace LegendDrive.Model
 				});
 				x.AddTrigger("Value", recommendedSpeed);
 				x.AddTrigger("Value", segmentFiveSecondsSpeed);
-				x.Size = CounterSize.L;
+				x.Size = CounterSize.XL;
 				x.SetImportant(false);
 				x.SetCritical(false);
 				x.AfterNewValue = y =>

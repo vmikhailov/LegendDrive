@@ -54,8 +54,8 @@ namespace LegendDrive
 			{ CounterSize.L, 45},
 			{ CounterSize.M, 35},
 			{ CounterSize.S, 25},
-			{ CounterSize.XS, 15},
-			{ CounterSize.XXS, 8}
+			{ CounterSize.XS, 18},
+			{ CounterSize.XXS, 10}
 		};
 	}
 }
