@@ -23,8 +23,8 @@ namespace LegendDrive
 
 			model = new GlobalModel();
 			MainPage = new MainPage(model);
-			simulator = new Simulator(model);
-			simulator.Start();
+			//simulator = new Simulator(model);
+			//simulator.Start();
 			_timer = new Timer(x => SaveState(), this, 15000, 15000); 
 		}
 

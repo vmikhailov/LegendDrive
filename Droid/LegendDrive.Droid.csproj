@@ -91,6 +91,7 @@
     <Compile Include="Services\GPSLoggingService.cs" />
     <Compile Include="Services\VibrationService.cs" />
     <Compile Include="Services\BaseService.cs" />
+    <Compile Include="SplashScreen.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -107,6 +108,13 @@
     <AndroidResource Include="Resources\drawable-xhdpi\icon.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\icon.png" />
     <AndroidResource Include="Resources\values\Colors.xml" />
+    <AndroidResource Include="Resources\layout\Splash.axml" />
+    <AndroidResource Include="Resources\layout\Splash2.axml" />
+    <AndroidResource Include="Resources\drawable\road.jpg" />
+    <AndroidResource Include="Resources\drawable\road320.png" />
+    <AndroidResource Include="Resources\drawable\road400bw.png" />
+    <AndroidResource Include="Resources\drawable\road400bw2.png" />
+    <AndroidResource Include="Resources\drawable\road500bw2.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GPXLib\GPXLib.csproj">

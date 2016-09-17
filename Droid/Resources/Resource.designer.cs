@@ -1897,8 +1897,23 @@ namespace LegendDrive.Droid
 			// aapt resource value: 0x7f02004d
 			public const int icon = 2130837581;
 			
+			// aapt resource value: 0x7f020053
+			public const int notification_template_icon_bg = 2130837587;
+			
 			// aapt resource value: 0x7f02004e
-			public const int notification_template_icon_bg = 2130837582;
+			public const int road = 2130837582;
+			
+			// aapt resource value: 0x7f02004f
+			public const int road320 = 2130837583;
+			
+			// aapt resource value: 0x7f020050
+			public const int road400bw = 2130837584;
+			
+			// aapt resource value: 0x7f020051
+			public const int road400bw2 = 2130837585;
+			
+			// aapt resource value: 0x7f020052
+			public const int road500bw2 = 2130837586;
 			
 			static Drawable()
 			{
@@ -2087,6 +2102,9 @@ namespace LegendDrive.Droid
 			// aapt resource value: 0x7f09003f
 			public const int image = 2131296319;
 			
+			// aapt resource value: 0x7f09007f
+			public const int imageButton_readtext = 2131296383;
+			
 			// aapt resource value: 0x7f09007d
 			public const int info = 2131296381;
 			
@@ -2216,8 +2234,8 @@ namespace LegendDrive.Droid
 			// aapt resource value: 0x7f09002b
 			public const int showTitle = 2131296299;
 			
-			// aapt resource value: 0x7f09007f
-			public const int sliding_tabs = 2131296383;
+			// aapt resource value: 0x7f090080
+			public const int sliding_tabs = 2131296384;
 			
 			// aapt resource value: 0x7f09006c
 			public const int snackbar_action = 2131296364;
@@ -2273,8 +2291,8 @@ namespace LegendDrive.Droid
 			// aapt resource value: 0x7f090048
 			public const int title_template = 2131296328;
 			
-			// aapt resource value: 0x7f090080
-			public const int toolbar = 2131296384;
+			// aapt resource value: 0x7f090081
+			public const int toolbar = 2131296385;
 			
 			// aapt resource value: 0x7f09001c
 			public const int top = 2131296284;
@@ -2492,13 +2510,19 @@ namespace LegendDrive.Droid
 			public const int select_dialog_singlechoice_material = 2130903087;
 			
 			// aapt resource value: 0x7f030030
-			public const int support_simple_spinner_dropdown_item = 2130903088;
+			public const int Splash = 2130903088;
 			
 			// aapt resource value: 0x7f030031
-			public const int Tabbar = 2130903089;
+			public const int Splash2 = 2130903089;
 			
 			// aapt resource value: 0x7f030032
-			public const int Toolbar = 2130903090;
+			public const int support_simple_spinner_dropdown_item = 2130903090;
+			
+			// aapt resource value: 0x7f030033
+			public const int Tabbar = 2130903091;
+			
+			// aapt resource value: 0x7f030034
+			public const int Toolbar = 2130903092;
 			
 			static Layout()
 			{

@@ -2,20 +2,14 @@
 using Android.Content.PM;
 using Android.Views;
 using Android.OS;
-using Xamarin.Forms;
 using Android.Locations;
-using Android.Runtime;
-using System;
-using System.Threading.Tasks;
-using LegendDrive.Model;
-using LegendDrive.Messaging;
 using LegendDrive.Droid.Services;
 
 namespace LegendDrive.Droid
 {
 	[Activity(Label = "Legend Drive", Icon = "@drawable/icon", 
 	          Theme = "@style/MyTheme",
-	          MainLauncher = true, 
+	          MainLauncher = false, 
 	          ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
 	public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
 	{
