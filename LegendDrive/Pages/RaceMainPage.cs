@@ -5,9 +5,9 @@ using Xamarin.Forms;
 namespace LegendDrive
 {
 
-	public class MainPage : ContentPage
+	public class RaceMainPage : ContentPage
 	{
-		public MainPage(GlobalModel model)
+		public RaceMainPage(GlobalModel model)
 		{
 			var grid = new Grid();
 			grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
@@ -22,6 +22,7 @@ namespace LegendDrive
 			grid.Children.Add(new RightPanelBuilder(model).Build(), 2, 0);
 
 			Content = grid;
+			BackgroundColor = Color.Black;
 
 			MessagingHub.Subscribe<GlobalCommand>(this, QueueType.AskConfirmation, (cmd) => ProcessCommand(cmd));
 			MessagingHub.Subscribe<string>(this, QueueType.Gesture, (msg) => ShowMessage(msg));

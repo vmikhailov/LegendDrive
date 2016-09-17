@@ -6,6 +6,7 @@ using LegendDrive.Model;
 using LegendDrive.Model.RaceModel;
 using Xamarin.Forms;
 using LegendDrive.Messaging;
+using LegendDrive.Counters.Interfaces;
 
 namespace LegendDrive
 {
@@ -34,10 +35,11 @@ namespace LegendDrive
 					WidthRequest = UIConfiguration.LargeButtonWidth,
 					HeightRequest = UIConfiguration.LargeButtonHeight,
 					BackgroundColor = UIConfiguration.ButtonColor,
-					FontSize = UIConfiguration.LargeButtonFontSize,
+					FontSize = UIConfiguration.LargeButtonFontSize * 2,
 					BindingContext = model.Race,
-					Margin = new Thickness(-2, -4),
+					Margin = new Thickness(2, 0, 2, 0),
 					BorderRadius = 0,
+					TextColor = UIConfiguration.CounterColors[CounterColor.White],
 					CommandParameter = cmdCode
 				};
 				btn.Command = normalCommand;
@@ -76,7 +78,7 @@ namespace LegendDrive
 			grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(UIConfiguration.LargeButtonHeight) });
 			grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 			grid.ColumnSpacing = 0;
-			grid.RowSpacing = 0;
+			grid.RowSpacing = 2;
 
 			grid.Children.Add(BuildButtonsPanel(startFinishButton, resetButton, clearButton, gpsButton, backButton), 0, 0);
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
+using Android.Util;
 using LegendDrive.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -11,72 +12,66 @@ namespace LegendDrive
 	public partial class App : Application
 	{
 		GlobalModel model;
-		string stateFile = "LegendDriveState.json";
-		string stateFileFullName;
 		Simulator simulator; 
 		Timer _timer;
 
 
 		public App()
 		{
-			stateFileFullName = Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.Personal), stateFile);
-
 			model = new GlobalModel();
-			MainPage = new MainPage(model);
+
+			//var tabs = new TabbedPage();
+			//tabs.Children.Add(new RaceMainPage(model) { Title = "Race" });
+
+			//tabs.Children.Add(new SettingsPage { Title = "Settings"});
+			//MainPage = tabs;
+			MainPage = new RaceMainPage(model);
+
 			//simulator = new Simulator(model);
 			//simulator.Start();
-			_timer = new Timer(x => SaveState(), this, 15000, 15000); 
-		}
-
-		void DeleteState()
-		{
-			var f = new FileInfo(stateFileFullName);
-			if (f.Exists) f.Delete();
+			//_timer = new Timer(x => SaveState(), this, 15000, 15000); 
 		}
 
 		protected override void OnStart()
 		{
-			// Handle when your app starts
-			LoadState();
+			if (Properties.ContainsKey("appstate"))
+			{
+				var state = (string)Properties["appstate"];
+				LoadAppState(state);
+			}
 		}
-
 		
 		protected override void OnSleep()
 		{
-			SaveState();
+			var state = GetAppState();
+			Properties["appstate"] = state;
 		}
 
 		protected override void OnResume()
 		{
-			// Handle when your app resumes
 		}
 
-		private void LoadState()
+		public string GetAppState()
 		{
-			if (new FileInfo(stateFileFullName).Exists)
+			return model.GetState().ToString();
+		}
+
+		public void LoadAppState(string state)
+		{
+			if (state != null)
 			{
 				try
 				{
-					var strState = File.ReadAllText(stateFileFullName);
-					var objState = JObject.Parse(strState);
-					model.LoadState(objState);
+					var objState = JObject.Parse(state);
+					if (objState != null)
+					{
+						model.LoadState(objState);
+					}
 				}
-				catch
+				catch(Exception ex)
 				{
-					File.Delete(stateFileFullName);
+					Log.Debug("state", ex.Message); 
 				}
-			}
-		}
-
-		private void SaveState()
-		{
-			try
-			{
-				var state = model.GetState();
-				File.WriteAllText(stateFileFullName, state.ToString());
-			}
-			catch
-			{
 			}
 		}
 	}

@@ -8,19 +8,23 @@ using LegendDrive.Droid.Services;
 namespace LegendDrive.Droid
 {
 	[Activity(Label = "Legend Drive", Icon = "@drawable/icon", 
-	          Theme = "@style/MyTheme",
+	         // Theme = "@style/MyTheme",
 	          MainLauncher = false, 
 	          ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-	public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
+	public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
+	//global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
 	{
 		LocationService _locationService;
 		VibrationService _vibrationService;
+		App _app;
 
 		protected override void OnCreate(Bundle bundle)
 		{
-			TabLayoutResource = Resource.Layout.Tabbar;
-			ToolbarResource = Resource.Layout.Toolbar;
-			RequestWindowFeature(WindowFeatures.NoTitle);
+			SetPersistent(true);
+			//TabLayoutResource = Resource.Layout.Tabbar;
+			//ToolbarResource = Resource.Layout.Toolbar;
+			//RequestWindowFeature(WindowFeatures.NoTitle);
+			RequestWindowFeature(WindowFeatures.ActionBarOverlay);
 
 			base.OnCreate(bundle);
 

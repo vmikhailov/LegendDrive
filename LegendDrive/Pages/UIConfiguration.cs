@@ -11,7 +11,7 @@ namespace LegendDrive
 		public const int ButtonFontSize = ButtonHeight / 2;
 
 		public const int LargeButtonWidth = 96 * 2;
-		public const int LargeButtonHeight = 64 + 8;
+		public const int LargeButtonHeight = 64 - 3;
 		public const int LargeButtonFontSize = LargeButtonHeight / 5;
 		public const int SegmentListNoFontSize = (int)(ButtonFontSize * 0.5);
 		public const int SegmentListLengthFontSize = (int)(ButtonFontSize * 0.7);
@@ -20,25 +20,25 @@ namespace LegendDrive
 
 		public const int SegmentListNoSize = (int)(ButtonWidth * 0.5);
 		public const int SegmentListLengthSize = (int)(ButtonWidth * 1.2);
-		public const int SegmentListSpeedSize = (int)(ButtonWidth * 0.7);
-		public const int SegmentListTimeoutSize = (int)(ButtonWidth * 0.6);
+		public const int SegmentListSpeedSize = (int)(ButtonWidth * 0.6);
+		public const int SegmentListTimeoutSize = (int)(ButtonWidth * 0.5);
 
 		public const int CounterWidth = 196;
 		public const int CounterHeight = 64;
 
 		public const int PanelWidth = ButtonWidth * 3;
-		public static Color ButtonColor = Xamarin.Forms.Color.Green.WithSaturation(0.25);
-		public static Color EnabledCounterBackground = Color.FromHex("2a3872").WithLuminosity(0.2);
+		public static Color ButtonColor = Color.FromHex("113322"); //Color.Green.WithSaturation(0.25);
+		public static Color EnabledCounterBackground = Color.FromHex("112233");//Color.FromHex("2a3872").WithLuminosity(0.2);
 		public static Color DisabledCounterBackground = Color.Gray.WithLuminosity(0.1);
 
-		public static Color EnabledCounterBorder = Color.FromHex("cccccc");
+		public static Color EnabledCounterBorder = Color.FromHex("000");
 		public static Color DisabledCounterBorder = Color.Gray;
 		public static Color ImportantCounterBorder = Color.Yellow;
 		public static Color CriticalCounterBorder = Color.FromHex("e20026");//Color.Red;
 
 		public static IDictionary<CounterColor, Color> CounterColors = new Dictionary<CounterColor, Color>
 		{
-			{ CounterColor.White, Color.FromHex("cccccc") },
+			{ CounterColor.White, Color.FromHex("bbbbbb") },
 			{ CounterColor.Blue, Color.FromHex("0072bc") },
 			{ CounterColor.Green, Color.FromHex("00cc22") },
 			{ CounterColor.Orange, Color.FromHex("f26522") },

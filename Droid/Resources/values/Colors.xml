@@ -8,7 +8,8 @@
 
 <resources>
   <color name="primary">#9E9E9E</color>
-  <color name="primaryDark">#616161</color>
+<!--  <color name="primaryDark">#616161</color>-->
+  <color name="primaryDark">#000000</color>
   <color name="primaryLight">#F5F5F5</color>
   <color name="accent">#8BC34A</color>
   <color name="primaryText">#212121</color>
@@ -18,4 +19,5 @@
   <color name="window_background">#000000</color>
   <color name="buttonColor">#243F23</color>
   <color name="buttonColorLight">#335F30</color>
+	
 </resources>

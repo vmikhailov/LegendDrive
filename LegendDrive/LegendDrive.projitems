@@ -20,11 +20,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Counters\AvgSpeedKmhCounter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\FuncValueConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\FuncBinding.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)MainPage\LeftPanelBuilder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)MainPage\RightPanelBuilder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)MainPage\IViewBuilder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)MainPage\UIConfiguration.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)MainPage\MainPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Pages\LeftPanelBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Pages\RightPanelBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Pages\IViewBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Pages\UIConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Pages\RaceMainPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Counters\BaseCounter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Counters\CurrentTimeCounter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Counters\TimerCounter.cs" />
@@ -39,8 +39,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Model\RaceModel\RaceSegment.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Model\RaceModel\TurnInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Counters\TriggeredFuncCounter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)MainPage\CountersPanelBuilder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)MainPage\CountersPanelBuilderHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Pages\CountersPanelBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Pages\CountersPanelBuilderHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Counters\Interfaces\ILocationProcessor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Counters\Interfaces\IRaceCounter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Counters\Interfaces\IDifferenceCounter.cs" />
@@ -61,7 +61,7 @@
     <Folder Include="$(MSBuildThisFileDirectory)Model\" />
     <Folder Include="$(MSBuildThisFileDirectory)Converters\" />
     <Folder Include="$(MSBuildThisFileDirectory)Counters\" />
-    <Folder Include="$(MSBuildThisFileDirectory)MainPage\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Pages\" />
     <Folder Include="$(MSBuildThisFileDirectory)Collections\" />
     <Folder Include="$(MSBuildThisFileDirectory)Model\Numpad\" />
     <Folder Include="$(MSBuildThisFileDirectory)Model\RaceModel\" />

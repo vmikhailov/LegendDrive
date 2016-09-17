@@ -12,21 +12,26 @@ namespace LegendDrive.Droid
 	{
 		static readonly string TAG = "X:" + typeof(SplashActivity).Name;
 
-		public override void OnCreate(Bundle savedInstanceState, PersistableBundle persistentState)
+		protected override void OnCreate(Bundle savedInstanceState)
 		{
-			base.OnCreate(savedInstanceState, persistentState);
-
+			base.OnCreate(savedInstanceState);
+			SetContentView(Resource.Layout.Splash2);
 			Log.Debug(TAG, "SplashActivity.OnCreate");
 		}
 
 		protected override void OnResume()
 		{
 			base.OnResume();
-			SetContentView(Resource.Layout.Splash2);
+
 
 			var startupWork = new Task(() => Log.Debug(TAG, "*"));
-			startupWork.ContinueWith(t => StartActivity(new Intent(Application.Context, typeof(MainActivity))), 
-			                         TaskScheduler.FromCurrentSynchronizationContext());
+
+			startupWork.ContinueWith(t =>
+			{
+				var main = new Intent(Application.Context, typeof(MainActivity));
+				main.AddFlags(ActivityFlags.NoAnimation);
+				StartActivity(main);
+			}, TaskScheduler.FromCurrentSynchronizationContext());
 
 			startupWork.Start();
 		}

@@ -5,7 +5,6 @@
 		<item name="colorPrimaryDark">@color/primaryDark</item>
 		<item name="colorAccent">@color/accent</item>
 		<item name="android:windowBackground">@color/window_background</item>
-		<item name="windowActionModeOverlay">false</item>
 		<item name="android:colorActivatedHighlight">@color/buttonColorLight</item>
 	</style>
 	<!-- Base theme applied no matter what API -->
@@ -14,7 +13,7 @@
 		<item name="android:windowNoTitle">true</item>
 		<item name="windowNoTitle">true</item>
 		<!--We will be using the toolbar so no need to show ActionBar-->
-		<item name="windowActionBar">false</item>
+		<item name="windowActionBar">true</item>
 		<!-- Set theme colors from http://www.google.com/design/spec/style/color.html#color-color-palette-->
 		<!-- colorPrimary is used for the default action bar background -->
 		<item name="colorPrimary">#2196F3</item>
@@ -25,12 +24,21 @@
 		<item name="colorAccent">#FF4081</item>
 		<!-- You can also set colorControlNormal, colorControlActivated
          colorControlHighlight and colorSwitchThumbNormal. -->
-		<item name="windowActionModeOverlay">false</item>
+		<item name="windowActionModeOverlay">true</item>
+		<item name="android:actionBarStyle">@style/MyTheme.ActionBarStyle</item>
 		<item name="android:navigationBarColor">@color/window_background</item>
 		<item name="android:datePickerDialogTheme">@style/AppCompatDialogStyle</item>
 	</style>
+
+	<style name="MyTheme.ActionBarStyle">
+       <!-- <item name="android:titleTextStyle">@style/MyTheme.ActionBar.TitleTextStyle</item>-->
+        <item name="background">@color/window_background</item>
+    </style>
+	
 	<style name="AppCompatDialogStyle" parent="Theme.AppCompat.Light.Dialog">
 		<item name="colorAccent">#FF4081</item>
+		<item name="android:windowNoTitle">true</item>
+		<item name="windowNoTitle">true</item>
 	</style>
 <!--	<style name="DarkTheme" parent="Theme.AppCompat.Light.NoActionBar">
 		<item name="android:colorPrimary">#777777</item>

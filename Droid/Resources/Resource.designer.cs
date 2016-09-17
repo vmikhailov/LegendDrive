@@ -2634,8 +2634,8 @@ namespace LegendDrive.Droid
 			// aapt resource value: 0x7f050005
 			public const int Animation_Design_BottomSheetDialog = 2131034117;
 			
-			// aapt resource value: 0x7f05015d
-			public const int AppCompatDialogStyle = 2131034461;
+			// aapt resource value: 0x7f05015e
+			public const int AppCompatDialogStyle = 2131034462;
 			
 			// aapt resource value: 0x7f0500a7
 			public const int Base_AlertDialog_AppCompat = 2131034279;
@@ -3080,6 +3080,9 @@ namespace LegendDrive.Droid
 			
 			// aapt resource value: 0x7f05015b
 			public const int MyTheme = 2131034459;
+			
+			// aapt resource value: 0x7f05015d
+			public const int MyTheme_ActionBarStyle = 2131034461;
 			
 			// aapt resource value: 0x7f05015c
 			public const int MyTheme_Base = 2131034460;

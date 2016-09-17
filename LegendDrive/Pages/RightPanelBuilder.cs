@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using LegendDrive.Counters.Interfaces;
 using LegendDrive.Model;
 using LegendDrive.Model.RaceModel;
 using Xamarin.Forms;
@@ -47,7 +48,7 @@ namespace LegendDrive
 					{
 						var l = new Label()
 						{
-							TextColor = Color.White,
+							TextColor = UIConfiguration.CounterColors[CounterColor.White],
 							HorizontalOptions = align,
 							FontSize = font,
 							FontFamily = "OpenSans"
@@ -99,6 +100,13 @@ namespace LegendDrive
 							centerStack(newLabel("TimeoutStr", UIConfiguration.SegmentListTimeoutFontSize, LayoutOptions.CenterAndExpand), UIConfiguration.SegmentListTimeoutSize),
 						},
 					};
+					stack.SetBinding(VisualElement.HeightRequestProperty, 
+					                 FuncBinding.Create<RaceSegment, double>(".", x =>
+									 {
+										 if (x == null) return 32;
+										 if (x.IsCurrent) return UIConfiguration.LargeButtonHeight;
+										 return 32;
+									 }));
 					stack.SetBinding(VisualElement.BackgroundColorProperty,
 					                 FuncBinding.Create<RaceSegment, Color>(".", x =>
 									 {
@@ -166,7 +174,8 @@ namespace LegendDrive
 			{
 				//HeightRequest = buttonHeight,
 				FontSize = UIConfiguration.ButtonFontSize * 0.8,
-				TextColor = Color.White,
+				TextColor = UIConfiguration.CounterColors[CounterColor.White],
+				Margin = new Thickness(5,0,0,0),
 				VerticalTextAlignment = TextAlignment.Center,
 				BindingContext = model.Numpad
 			};
@@ -177,8 +186,8 @@ namespace LegendDrive
 
 			grid.Padding = new Thickness(0);
 
-			grid.ColumnSpacing = -1;
-			grid.RowSpacing = -2;
+			grid.ColumnSpacing = 0;
+			grid.RowSpacing = 0;
 			var cfg = model.Numpad.NumpadConfiguration;
 
 			for (int i = 0; i < cfg.X; i++)
@@ -215,11 +224,10 @@ namespace LegendDrive
 			{
 				Text = b.Text,
 				BackgroundColor = UIConfiguration.ButtonColor,
+				TextColor = UIConfiguration.CounterColors[CounterColor.White],
 				FontSize = size,
 				BorderRadius = 0,
-				Margin = new Thickness(-2, -4),
-				BorderColor = Color.Red,
-				BorderWidth = 5,
+				Margin = new Thickness(2, 2, 2, b.Y == 4 ? 0 : 2),
 				HorizontalOptions = LayoutOptions.FillAndExpand,
 				VerticalOptions = LayoutOptions.FillAndExpand
 			};
