@@ -18,21 +18,15 @@ namespace LegendDrive.Counters
 			get { return string.Format(@"{1}{0:hh\:mm\:ss}", Value, Value?.TotalMilliseconds < 0?"-":""); }
 		}
 
-		protected override TimeSpan? Calculate()
-		{
-			var x = base.Calculate();
+		public int CriticalThresholdSec { get; set; } = 1;
 
-			return x;
-		}
+		public int ImportantThresholdSec { get; set; } = 11;
 
-		protected override void OnValueChanged()
-		{
-			if (IsRunning)
-			{
-				SetImportant(Value.GetValueOrDefault().TotalSeconds <= 10);
-				SetCritical(Value.GetValueOrDefault().TotalSeconds <= 0);
-			}
-		}
+		public override bool IsCritical => IsRunning && TotalSeconds < CriticalThresholdSec;
+
+		public override bool IsImportant => IsRunning && TotalSeconds < ImportantThresholdSec;
+
+		private int TotalSeconds => (int)Value.GetValueOrDefault().TotalSeconds;
 
 		protected override TimeSpan? Subtract(TimeSpan? v1, TimeSpan? v2)
 		{

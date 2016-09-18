@@ -38,6 +38,14 @@ namespace LegendDrive.Counters
 			get { return string.Format("{0:F0} m/s", Value); }
 		}
 
+		public override string DebugString
+		{
+			get
+			{
+				return $"{samples.Count.ToString()}/{calccount}";
+			}
+		}
+
 		protected override double Calculate()
 		{
 			lock(this)

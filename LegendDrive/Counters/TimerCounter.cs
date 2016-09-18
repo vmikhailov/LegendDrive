@@ -10,10 +10,11 @@ namespace LegendDrive.Counters
 {
 	public class TimerCounter : BaseCounter<TimeSpan?>, ISupportHistory, ISupportStatePersistance
 	{
-		private Timer timer;
-		private long elapsed;
-		private int accuracy = 500;
+	    Timer timer;
+		long elapsed;
+		int accuracy = 500;
 		Stack<long> history;
+		int calccount;
 
 		public TimerCounter() : this("Timer")
 		{
@@ -31,6 +32,14 @@ namespace LegendDrive.Counters
 			get { return string.Format(@"{0:hh\:mm\:ss}", Value); }
 		}
 
+		public override string DebugString
+		{
+			get
+			{
+				return $"{calccount}";
+			}
+		}
+
 		public override TimeSpan? Value
 		{
 			get
@@ -44,9 +53,10 @@ namespace LegendDrive.Counters
 		{
 			if (IsRunning)
 			{
+				calccount++;
 				elapsed += accuracy;
+				OnPropertyChanged("Value");
 			}
-			OnPropertyChanged("Value");
 		}
 
 		public override void Reset()

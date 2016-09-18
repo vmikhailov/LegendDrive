@@ -17,6 +17,8 @@ namespace LegendDrive.Counters
 
 		T target;
 		IRaceCounter<T> targetCounter;
+		int baseChangesCounter;
+		int targetChangesCounter;
 
 		public BaseDifferenceCounter(string name):base(name)
 		{
@@ -31,9 +33,18 @@ namespace LegendDrive.Counters
 
 		protected abstract T Subtract(T v1, T v2);
 
+		public override string DebugString
+		{
+			get
+			{
+				return $"{baseChangesCounter}/{targetChangesCounter}";
+			}
+		}
+
 		public void SetTarget(T value)
 		{
 			target = value;
+			targetChangesCounter++;
 			Invalidate();
 		}
 
@@ -43,13 +54,21 @@ namespace LegendDrive.Counters
 			if (targetCounter is INotifyPropertyChanged)
 			{
 				var notify = targetCounter as INotifyPropertyChanged;
-				notify.PropertyChanged += (sender, e) => Invalidate();
+				notify.PropertyChanged += (sender, e) =>
+				{
+					if (e.PropertyName == "Value")
+					{
+						targetChangesCounter++;
+						Invalidate();
+					}
+				};
 			}
 		}
 
 		public void SetBase(T value)
 		{
 			baseValue = value;
+			baseChangesCounter++;
 			Invalidate();
 		}
 
@@ -59,7 +78,14 @@ namespace LegendDrive.Counters
 			if (baseCounter is INotifyPropertyChanged)
 			{
 				var notify = baseCounter as INotifyPropertyChanged;
-				notify.PropertyChanged += (sender, e) => Invalidate();
+				notify.PropertyChanged += (sender, e) =>
+				{
+					if (e.PropertyName == "Value")
+					{
+						baseChangesCounter++;
+						Invalidate();
+					}
+				};
 			}
 			Invalidate();
 		}

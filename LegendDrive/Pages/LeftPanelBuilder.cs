@@ -54,14 +54,12 @@ namespace LegendDrive
 			var resetButton = btnFunc("Reset", GlobalCommand.ResetAll);
 
 			var clearButton = btnFunc("Clear", GlobalCommand.ClearAll);
-			clearButton.SetBinding(VisualElement.IsEnabledProperty,
-								  FuncBinding.Create<Race, bool>(".", x => !x.IsRunning));
+			clearButton.SetBinding(VisualElement.IsEnabledProperty, FuncBinding.Create<bool, bool>("IsRunning", x => !x));
 
 			var gpsButton = btnFunc("GPS", GlobalCommand.GPSReset);
 
 			var backButton = btnFunc("Back", GlobalCommand.Back);
-			backButton.SetBinding(VisualElement.IsEnabledProperty,
-								  FuncBinding.Create<Race, bool>(".", x => x.IsRunning && x.CanGoBack));
+			backButton.SetBinding(VisualElement.IsEnabledProperty, "CanGoBack");
 
 			var turnButton = btnFunc("Turn", GlobalCommand.Turn);
 			turnButton.WidthRequest = UIConfiguration.LargeButtonWidth * 3;
@@ -69,8 +67,7 @@ namespace LegendDrive
 
 			var deleteButton = btnFunc("Del", GlobalCommand.DelSegment);
 			deleteButton.WidthRequest = UIConfiguration.LargeButtonWidth;
-			deleteButton.SetBinding(VisualElement.IsEnabledProperty, 
-			                        FuncBinding.Create<Race, bool>(".", x => x.Segments.Any()));
+			deleteButton.SetBinding(VisualElement.IsEnabledProperty, "CanDelete");
 
 			var grid = new Grid();
 			grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(UIConfiguration.LargeButtonHeight) });

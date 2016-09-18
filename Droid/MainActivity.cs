@@ -20,16 +20,20 @@ namespace LegendDrive.Droid
 
 		protected override void OnCreate(Bundle bundle)
 		{
-			SetPersistent(true);
+			//SetPersistent(true);
 			//TabLayoutResource = Resource.Layout.Tabbar;
 			//ToolbarResource = Resource.Layout.Toolbar;
 			//RequestWindowFeature(WindowFeatures.NoTitle);
-			RequestWindowFeature(WindowFeatures.ActionBarOverlay);
+			//RequestWindowFeature(WindowFeatures.ActionBar);
 
 			base.OnCreate(bundle);
-
 			global::Xamarin.Forms.Forms.Init(this, bundle);
+			InitServices();
+			LoadApplication(new App());
+		}
 
+		protected void InitServices()
+		{
 			var locationManager = (LocationManager)GetSystemService(LocationService);
 			_locationService = new LocationService(locationManager);
 			_locationService.Init();
@@ -39,7 +43,6 @@ namespace LegendDrive.Droid
 			_vibrationService.Init();
 
 			GPSLoggingService.Instance.Init();
-			LoadApplication(new App());
 		}
 
 		protected override void OnResume()
@@ -57,11 +60,11 @@ namespace LegendDrive.Droid
 		public override void OnWindowFocusChanged(bool hasFocus)
 		{
 			base.OnWindowFocusChanged(hasFocus);
-			//if (CurrentFocus != null)
-			//{ 
-			//	CurrentFocus.SystemUiVisibility = 
-			//		(StatusBarVisibility)(SystemUiFlags.ImmersiveSticky | SystemUiFlags.HideNavigation | SystemUiFlags.LayoutFullscreen  );
-			//}
+			if (CurrentFocus != null)
+			{ 
+				CurrentFocus.SystemUiVisibility = 
+					(StatusBarVisibility)(SystemUiFlags.ImmersiveSticky | SystemUiFlags.HideNavigation);
+			}
 		}
 	}
 }

@@ -67,7 +67,15 @@ namespace LegendDrive.Model.RaceModel
 		{
 			get
 			{
-				return Turns.Skip(1).Any(); //first turn is start
+				return IsRunning && Turns.Skip(1).Any(); //first turn is start
+			}
+		}
+
+		public bool CanDelete
+		{
+			get
+			{
+				return Segments.Any(); 
 			}
 		}
 
@@ -122,6 +130,7 @@ namespace LegendDrive.Model.RaceModel
 				{
 					_isRunning = value;
 					OnPropertyChanged("IsRunning");
+					OnPropertyChanged("CanGoBack");
 				}
 			}
 		}
@@ -176,7 +185,7 @@ namespace LegendDrive.Model.RaceModel
 
 		public void AddTurn()
 		{
-			lock(_syncObject)
+			lock (_syncObject)
 			{
 				var last = Turns.LastOrDefault();
 				var lastNo = last != null ? last.No : 0;
@@ -186,7 +195,6 @@ namespace LegendDrive.Model.RaceModel
 					TurnTime = DateTime.Now
 				};
 				Turns.Add(turn);
-				OnPropertyChanged("CanGoBack");
 			}
 		}
 
@@ -198,12 +206,20 @@ namespace LegendDrive.Model.RaceModel
 		{
 			SyncTurnsAndSegments();
 			OnPropertyChanged("Turns");
+			OnPropertyChanged("CanGoBack");
+			if (Turns.Count <= 1)
+			{
+				OnPropertyChanged("StartTime");
+			}
 		}
 
 		private void OnSegmentsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			SyncTurnsAndSegments();
 			OnPropertyChanged("Segments");
+			OnPropertyChanged("DurationOfRace");
+			OnPropertyChanged("LengthOfRace");
+			OnPropertyChanged("CanDelete");
 		}
 
 		private void SyncTurnsAndSegments()

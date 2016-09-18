@@ -7,6 +7,7 @@ namespace LegendDrive.Counters.Interfaces
 		string Name { get; }
 		object ValueObject { get; }
 		string ValueString { get; }
+		string DebugString { get; }
 
 		void Reset();
 		void Start();

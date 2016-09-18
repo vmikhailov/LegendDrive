@@ -21,21 +21,13 @@ namespace LegendDrive.Counters
 			get { return Value?.ToString("#,0", NumberFormatInfo); }
 		}
 
-		protected override double? Calculate()
-		{
-			var x = base.Calculate();
+		public double CriticalThreshold { get; set; } = 0.5;
 
-			return x;
-		}
+		public double ImportantThreshold { get; set; } = 100;
 
-		protected override void OnValueChanged()
-		{
-			if (IsRunning)
-			{
-				SetImportant(Value < 100);
-				SetCritical(Value <= 0);
-			}
-		}
+		public override bool IsCritical => IsRunning && Value < CriticalThreshold;
+
+		public override bool IsImportant => IsRunning && Value < ImportantThreshold;
 
 		protected override double? Subtract(double? v1, double? v2)
 		{

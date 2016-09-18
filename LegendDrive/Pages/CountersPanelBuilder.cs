@@ -4,6 +4,7 @@ using System.Linq;
 using LegendDrive.Counters.Interfaces;
 using LegendDrive.Messaging;
 using LegendDrive.Model;
+using LegendDrive.Model.ViewModel;
 using Xamarin.Forms;
 
 namespace LegendDrive
@@ -26,10 +27,10 @@ namespace LegendDrive
 			var grid = new Grid();
 			grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 			grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(0) });
-			foreach (var c in model.CountersGroup.Counters.Values)
+			foreach (var g in model.CountersGroup.Groups)
 			{
 				//var rowCount = (c.Count - 1) / 8 + 1;
-				grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+				grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(g.Weight, GridUnitType.Star) });
 				grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(0) });
 			}
 			grid.ColumnSpacing = 0;
@@ -37,9 +38,9 @@ namespace LegendDrive
 
 			int i = 0;
 			grid.Children.Add(BuildSplitter(), 0, i++);
-			foreach (var c in model.CountersGroup.Counters.Values)
+			foreach (var c in model.CountersGroup.Groups)
 			{
-				grid.Children.Add(BuildCountersPanel(c), 0, i++);
+				grid.Children.Add(BuildCountersPanel(c.Counters), 0, i++);
 				grid.Children.Add(BuildSplitter(), 0, i++);
 			}
 			return grid;
@@ -52,54 +53,17 @@ namespace LegendDrive
 
 		private View BuildCountersPanel(IEnumerable<IRaceCounter> counters)
 		{
-			return CountersPanelBuilderHelper.BuildAdaptivePanel(counters.Select(x => BuildCounterPanel(x)).ToList());
+			return CountersPanelBuilderHelper.BuildAdaptivePanel(
+				counters.Select(x => BuildCounterPanel(new RaceCounterViewModel(x))).ToList());
 		}
 
-		private View BuildCounterPanel(IRaceCounter counter)
+		private View BuildCounterPanel(RaceCounterViewModel counter)
 		{
-			Func<IRaceCounter, Color> counterColorFunc = x => 
-			{
-				if (!x.IsRunning) return UIConfiguration.DisabledCounterBorder;
-				if (x.IsCritical) return UIConfiguration.CriticalCounterBorder;
-				if (x.IsImportant) return UIConfiguration.ImportantCounterBorder;
-				return UIConfiguration.CounterColors[x.Color];
-			};
-
-			Func<CounterSize, double> counterFontSizeFunc = x =>
-			{
-				return UIConfiguration.CounterFontSizes[x];
-			};
-
 			var tapRecognizer = new TapGestureRecognizer();
 			tapRecognizer.NumberOfTapsRequired = 2;
-			tapRecognizer.Tapped += (sender, e) =>
-			{
-				var cntr = (sender as VisualElement)?.BindingContext as IRaceCounter;
-				if (cntr != null)
-				{
-					if (cntr.IsRunning) cntr.Stop(); else cntr.Start();
-				}
-				//MessagingHub.Send(new VibrateCommand("33011101111013"));
-				
-				//var name = cntr?.Name ?? "unknown";
-				//MessagingHub.Send(QueueType.Gesture, $"tap: {name} {sender.GetType().Name}");
-			};
+			tapRecognizer.Command = counter.TapCommand;
 
-			var panRecognizer = new PanGestureRecognizer();
-			panRecognizer.TouchPoints = 1;
-			panRecognizer.PanUpdated += (sender, e) =>
-			{
-				var cntr = (sender as VisualElement)?.BindingContext as IRaceCounter;
-				if (cntr != null)
-				{
-					if (cntr.IsRunning) cntr.Stop(); else cntr.Start();
-				}
-				//var name = cntr?.Name ?? "unknown";
-				//MessagingHub.Send(QueueType.Gesture, $"pan: {e.TotalX} {e.TotalY} {name} {sender.GetType().Name}");
-			};
-				
-
-			var l1 = new Label()
+			var labelHeader = new Label()
 			{
 				TextColor = UIConfiguration.CounterColors[CounterColor.White],
 				HorizontalOptions = LayoutOptions.StartAndExpand,
@@ -107,29 +71,42 @@ namespace LegendDrive
 				FontSize = 15,
 				FontFamily = "OpenSans",
 				BindingContext = counter,
-			};
-			l1.SetBinding(Label.TextProperty, "Name");
-			l1.SetBinding(Label.TextColorProperty,
-						  FuncBinding.Create(".", counterColorFunc));
+			}.With(x =>
+			{
+				x.SetBinding(Label.TextProperty, "Name");
+				x.SetBinding(Label.TextColorProperty, "Color");
+			});
 
-			var l2 = new Label()
+			var lableValue = new Label()
 			{
 				TextColor = UIConfiguration.CounterColors[CounterColor.White],
 				HorizontalOptions = LayoutOptions.Center,
 				VerticalOptions = LayoutOptions.Center,
-				Margin = new Thickness(0,10,0,0),
+				Margin = new Thickness(0, 10, 0, 0),
 				FontFamily = "OpenSans",
 				BindingContext = counter
-			};
-			l2.SetBinding(Label.TextColorProperty, 
-			              FuncBinding.Create(".", counterColorFunc));
-			l2.SetBinding(Label.TextProperty, 
-			              new Binding(".", converter: new CounterToStringConverter()));
-			l2.SetBinding(Label.FontSizeProperty, FuncBinding.Create("Size", counterFontSizeFunc));
-			l2.SetBinding(Label.FontAttributesProperty, 
-			              FuncBinding.Create<CounterSize, FontAttributes>("Size", 
-                              x => x >= CounterSize.XXL ? FontAttributes.Bold : FontAttributes.None));
-			//l2.GestureRecognizers.Add(tapRecognizer);
+			}.With(x =>
+			{
+				x.SetBinding(Label.TextColorProperty, "Color");
+				x.SetBinding(Label.TextProperty, "Value");
+				x.SetBinding(Label.FontSizeProperty, "FontSize");
+				x.SetBinding(Label.FontAttributesProperty, "FontAttributes");
+			});
+
+			var labelDebug = new Label()
+			{
+				TextColor = UIConfiguration.CounterColors[CounterColor.White],
+				HorizontalOptions = LayoutOptions.EndAndExpand,
+				Margin = new Thickness(5, 0, 0, 0),
+				FontSize = 12,
+				FontFamily = "OpenSans",
+				IsVisible = model.ShowDebugInfo,
+				//BackgroundColor = Color.Red,
+				BindingContext = counter,
+			}.With(x =>
+			{
+				x.SetBinding(Label.TextProperty, "DebugString");
+			});
 
 			var relative = new RelativeLayout()
 			{
@@ -137,41 +114,37 @@ namespace LegendDrive
 				Margin = new Thickness(2),
 				HorizontalOptions = LayoutOptions.FillAndExpand,
 				VerticalOptions = LayoutOptions.FillAndExpand,
-				WidthRequest = -1,
-				HeightRequest = -1,
 				BindingContext = counter
-
 			};
 
-			relative.SetBinding(VisualElement.BackgroundColorProperty,
-							 	FuncBinding.
-								Create<bool, Color>("IsRunning", (x) => x ?
-									   UIConfiguration.EnabledCounterBackground :
-									   UIConfiguration.DisabledCounterBackground));
+			relative.SetBinding(VisualElement.BackgroundColorProperty, "BackgroundColor");
 
-			relative.Children.Add(l1,
+			relative.Children.Add(labelHeader,
 								  Constraint.RelativeToParent((parent) => 0),
 								  Constraint.RelativeToParent((parent) => 0));
 
-			relative.Children.Add(l2,
+			relative.Children.Add(labelDebug,
+								  Constraint.RelativeToParent((parent) => 0),
+								  Constraint.RelativeToParent((parent) => parent.Height - labelDebug.Height - 2),
+			                      Constraint.RelativeToParent((parent) => parent.Width - 2));
+			                      //Constraint.Constant(50));
+
+			relative.Children.Add(lableValue,
 								  Constraint.RelativeToParent((parent) => 0),
 								  Constraint.RelativeToParent((parent) => 0),
 								  Constraint.RelativeToParent((parent) => parent.Width),
 								  Constraint.RelativeToParent((parent) => parent.Height));
 			relative.GestureRecognizers.Add(tapRecognizer);
-			//relative.GestureRecognizers.Add(panRecognizer);
 
 			//var frame = new Frame()
 			//{
-			//	Padding = new Thickness(0),
+			//	Padding = new Thickness(2),
 			//	Margin = new Thickness(2),
 			//	HorizontalOptions = LayoutOptions.FillAndExpand,
 			//	VerticalOptions = LayoutOptions.FillAndExpand,
 			//	Content = relative,
 			//	BindingContext = counter
-
 			//};
-			//frame.GestureRecognizers.Add(tapRecognizer);
 			//frame.SetBinding(VisualElement.BackgroundColorProperty, FuncBinding.Create(".", counterColorFunc));
 
 			return relative;

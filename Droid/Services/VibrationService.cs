@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -24,19 +25,24 @@ namespace LegendDrive.Droid.Services
 
 		void ProcessCommand(VibrateCommand cmd)
 		{
+			Task.Run(async () => await Execute(cmd));
+		}
+
+		async Task Execute(VibrateCommand cmd)
+		{
 			foreach (var c in cmd.Pattern)
 			{
 				var d = (int)c - 48;
 				if (d > 0)
 				{
 					Vibrate(cmd.ImpulseLength * d);
-					Thread.Sleep(cmd.ImpulseLength * d);
+					await Task.Delay(cmd.ImpulseLength * d);
 				}
 				else
 				{
-					Thread.Sleep(cmd.ImpulseLength);
+					await Task.Delay(cmd.ImpulseLength);
 				}
-				Thread.Sleep(cmd.PauseLength);
+				await Task.Delay(cmd.PauseLength);
 			}
 		}
 

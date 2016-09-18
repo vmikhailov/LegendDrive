@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Globalization;
+using System.Threading;
 using LegendDrive.Counters.Interfaces;
 using LegendDrive.Persistance;
 using Newtonsoft.Json.Linq;
@@ -11,7 +12,7 @@ namespace LegendDrive.Counters
 	{
 		T value;
 		bool isUpToDate;
-
+		int calccount;
 
 		public BaseCalculatedCounter(string name):base(name)
 		{
@@ -24,11 +25,12 @@ namespace LegendDrive.Counters
 				if (IsRunning)
 				{
 					EnsureInitialized();
-					if (!isUpToDate)
+					if (RecalcNeeded())
 					{
 						SuppressEvent();
-						value = Calculate();
+						calccount++;
 						isUpToDate = true;
+						value = Calculate();
 						ResumeEvents();
 						OnValueChanged();
 					}
@@ -40,6 +42,21 @@ namespace LegendDrive.Counters
 				}
 			}
 		}
+
+		protected virtual bool RecalcNeeded()
+		{
+			return !isUpToDate;
+		}
+
+		public override string DebugString
+		{
+			get
+			{
+				var chr = isUpToDate ? "+" : "";
+				return $"{chr}{calccount}";
+			}
+		}
+
 
 		protected abstract T Calculate();
 		protected virtual void OnValueChanged()

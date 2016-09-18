@@ -17,11 +17,11 @@ namespace LegendDrive.Counters
 			if (handler != null)
 			{
 				handler(this, new PropertyChangedEventArgs(propertyName));
-				handler(this, new PropertyChangedEventArgs("."));
+				//handler(this, new PropertyChangedEventArgs("."));
 			}
 		}
 
-		protected void OnPropertyChanged(string propertyName = null)
+		protected virtual void OnPropertyChanged(string propertyName = null)
 		{
 			if (suppressed > 0)
 			{
@@ -38,19 +38,30 @@ namespace LegendDrive.Counters
 
 		protected void SuppressEvent()
 		{
-			suppressed++;
+			//suppressed++;
 		}
 
 		protected void ResumeEvents()
 		{
-			lock(syncObject)
+			if (suppressed > 0)
 			{
-				if (--suppressed == 0)
+				lock (syncObject)
 				{
-					foreach (var propertyName in suppressedProperties.Distinct().ToList())
+					if (suppressed > 0)
 					{
-						OnPropertyChangedSingle(propertyName);
+						ResumeEventsImpl();
 					}
+				}
+			}
+		}
+
+		private void ResumeEventsImpl()
+		{
+			if (--suppressed == 0)
+			{
+				foreach (var propertyName in suppressedProperties.Distinct().ToList())
+				{
+					OnPropertyChangedSingle(propertyName);
 				}
 			}
 		}

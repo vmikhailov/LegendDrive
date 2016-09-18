@@ -28,19 +28,17 @@ namespace LegendDrive.Counters
 			nfi.NumberGroupSeparator = " ";
 		}
 
-		protected NumberFormatInfo NumberFormatInfo
-		{
-			get { return nfi; }
-		}
+		protected NumberFormatInfo NumberFormatInfo => nfi;
+		public virtual string DebugString => "";
+		public string Name => name;
+		public object ValueObject => Value;
+		public virtual bool IsImportant => important;
+		public virtual bool IsCritical => critical;
+		public virtual bool IsRunning => running;
 
 		public abstract string ValueString
 		{
 			get;
-		}
-
-		public object ValueObject
-		{
-			get { return Value; }
 		}
 
 		public abstract T Value
@@ -65,14 +63,6 @@ namespace LegendDrive.Counters
 		public virtual bool IsInitialized
 		{
 			get { return initialized; }
-		}
-
-		public string Name
-		{
-			get
-			{
-				return name;
-			}
 		}
 
 		public void Flash()
@@ -119,21 +109,6 @@ namespace LegendDrive.Counters
 					OnPropertyChanged("Color");
 				}
 			}
-		}
-
-		public virtual bool IsImportant
-		{
-			get { return important; }
-		}
-
-		public virtual bool IsCritical
-		{
-			get { return critical; }
-		}
-
-		public virtual bool IsRunning
-		{
-			get { return running; }
 		}
 
 		public virtual void Start()
@@ -190,6 +165,14 @@ namespace LegendDrive.Counters
 			running = obj.GetValue<bool>(nameof(running));
 			OnPropertyChanged("IsRunning");
 		}
-	}
 
+		protected override void OnPropertyChanged(string propertyName = null)
+		{
+			base.OnPropertyChanged(propertyName);
+			if (propertyName == "Value")
+			{
+				base.OnPropertyChanged("DebugString");
+			}
+		}
+	}
 }

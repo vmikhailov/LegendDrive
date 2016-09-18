@@ -7,6 +7,7 @@ namespace LegendDrive.Counters
 	{
 		private Timer timer;
 
+
 		public CurrentTimeCounter() : this("Current time")
 		{
 		}

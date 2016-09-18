@@ -16,7 +16,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Counters\DistanceCounter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Counters\AvgSpeedCounter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Counters\BaseBindingObject.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Converters\CounterToStringConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Counters\AvgSpeedKmhCounter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\FuncValueConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\FuncBinding.cs" />
@@ -49,13 +48,15 @@
     <Compile Include="$(MSBuildThisFileDirectory)Counters\RemainingTimeCounter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Counters\Interfaces\ISupportHistory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Counters\BaseDifferenceCounter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Model\CountersGroup.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\CountersContainer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Persistance\ISupportStatePersistance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Persistance\StatePersistanceHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Model\Simulator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Model\NullableExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\MessagingHub.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Counters\BaseCalculatedCounter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\CountersGroup.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\ViewModel\RaceCounterViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Model\" />
@@ -68,5 +69,6 @@
     <Folder Include="$(MSBuildThisFileDirectory)Counters\Interfaces\" />
     <Folder Include="$(MSBuildThisFileDirectory)Persistance\" />
     <Folder Include="$(MSBuildThisFileDirectory)Messaging\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Model\ViewModel\" />
   </ItemGroup>
 </Project>

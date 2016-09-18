@@ -20,7 +20,9 @@ namespace LegendDrive.Model
 
 		public Race Race { get; set; }
 
-		public CountersGroup CountersGroup { get; set; }
+		public CountersContainer CountersGroup { get; set; }
+
+		public bool ShowDebugInfo { get; set;} 
 
 		public GlobalModel()
 		{
@@ -28,8 +30,9 @@ namespace LegendDrive.Model
 			Race = new Race();
 			Numpad.NewDataTextEntered += Race.ParseAndAddNewSegments;
 
-			CountersGroup = new CountersGroup(this);
+			CountersGroup = new CountersContainer(this);
 			CountersGroup.Init();
+			ShowDebugInfo = true;
 
 			MessagingHub.Subscribe<GlobalCommand>(this, QueueType.Click, (cmd) => ProcessClickCommand(cmd));
 			MessagingHub.Subscribe<GlobalCommand>(this, QueueType.Confirmed, (cmd) => ProcessConfirmedCommand(cmd));
@@ -199,7 +202,6 @@ namespace LegendDrive.Model
 				Race.AddTurn();
 			}
 		}
-
 
 		public void ClearAll()
 		{

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using Xamarin.Forms;
 
 namespace LegendDrive
@@ -8,6 +9,11 @@ namespace LegendDrive
 		public static Binding Create<TValue, TResult>(string path, Func<TValue, TResult> map)
 		{
 			return Create<TValue, object, TResult>(path, (value, context) => map(value));
+		}
+
+		public static Binding Create<TValue>(Expression<Func<TValue, object>> expression)
+		{
+			return Binding.Create(expression, BindingMode.OneWay, null, null, null);
 		}
 
 		public static Binding Create<TValue, TContext, TResult>(string path, Func<TValue, TContext, TResult> map, TContext parameter = default(TContext))

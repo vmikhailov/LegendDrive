@@ -156,6 +156,12 @@ namespace LegendDrive.Model.RaceModel
 			Speed = obj.GetValue<double>(nameof(Speed));
 			Timeout = obj.GetValue<TimeSpan>(nameof(Timeout));
 		}
+
+		protected override void OnPropertyChanged(string propertyName = null)
+		{
+			base.OnPropertyChanged(propertyName);
+			base.OnPropertyChanged("."); //workaround 
+		}
 	}
 }
 

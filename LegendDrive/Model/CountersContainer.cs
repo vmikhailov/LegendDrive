@@ -9,9 +9,10 @@ using LegendDrive.Messaging;
 
 namespace LegendDrive.Model
 {
-	public class CountersGroup
+	public class CountersContainer
 	{
-		public IDictionary<string, ObservableRangeCollection<IRaceCounter>> Counters { get; set; }
+		List<CountersGroup> groups;
+		public IEnumerable<CountersGroup> Groups => groups;
 
 		List<IRaceCounter> HiddenCounters { get; set; }
 		IEnumerable<IRaceCounter> SegmentCounters { get; set; }
@@ -20,14 +21,14 @@ namespace LegendDrive.Model
 		GlobalModel model;
 		static int gpsSymbol;
 
-		public CountersGroup(GlobalModel model)
+		public CountersContainer(GlobalModel model)
 		{
 			this.model = model;
 		}
 
 		public void Init()
 		{
-			Counters = new Dictionary<string, ObservableRangeCollection<IRaceCounter>>();
+			groups = new List<CountersGroup>();
 
 			//TIME counters (8)
 			var globalCurrentTime = new CurrentTimeCounter();
@@ -37,19 +38,19 @@ namespace LegendDrive.Model
 			var raceDuration = new TriggeredFuncCounter<Race, TimeSpan?>("Race duration", @"{0:hh\:mm\:ss}").With(x =>
 			{
 				x.BindTo(model.Race, y => y.DurationOfRace);
-				x.AddTrigger(".", model.Race);
+				x.AddTrigger("DurationOfRace", model.Race);
 			});
 
 			var raceStartTime = new TriggeredFuncCounter<Race, DateTime?>("Race start time", @"{0:HH\:mm\:ss}").With(x =>
 			{
 				x.BindTo(model.Race, y => y.StartTime);
-				x.AddTrigger(".", model.Race);
+				x.AddTrigger("StartTime", model.Race);
 			});
 
 			var raceEstimatedFinishTime = new TriggeredFuncCounter<Race, DateTime?>("Estimated finish time", @"{0:HH\:mm\:ss}").With(x =>
 			{
 				x.BindTo(model.Race, y => y.EstimatedFinishTime);
-				x.AddTrigger(".", model.Race);
+				x.AddTrigger("EstimatedFinishTime", model.Race);
 			});
 
 			var segmentTimer = new TriggeredFuncCounter<Race, TimeSpan?>("Timer at the end of segment", @"{0:hh\:mm\:ss}").With(x =>
@@ -147,7 +148,7 @@ namespace LegendDrive.Model
 			var raceLength = new TriggeredFuncCounter<Race, double?>("Length of race").With(x =>
 			{
 				x.BindTo(model.Race, y => y.LengthOfRace);
-				x.AddTrigger(".", model.Race);
+				x.AddTrigger("LengthOfRace", model.Race);
 			});
 
 			var segmentDistanceToTurn = new RemainingDistanceCounter("Distance to turn").With(x =>
@@ -164,7 +165,7 @@ namespace LegendDrive.Model
 					return y.Segments.TakeWhile(z => z.Passed).Sum(z => z.Distance)
 							+ segmentDistance.Value;
 				});
-				x.AddTrigger(".", model.Race);
+				x.AddTrigger("Segments", model.Race);
 				x.AddTrigger("Value", segmentDistance);
 			});
 
@@ -203,7 +204,7 @@ namespace LegendDrive.Model
 					}
 					return 0;
 				});
-				x.AddTrigger(".", model.Race);
+				x.AddTrigger("CurrentSegment, IsRunning", model.Race);
 				x.AddTrigger("Value", raceTimer);
 				x.AddTrigger("Value", raceRemainingTime);
 			});
@@ -300,15 +301,14 @@ namespace LegendDrive.Model
 
 			var group3 = new ObservableRangeCollection<IRaceCounter>()
 			{
-				raceLength, raceDuration, globalDistance, racePassedDistance, 
-				segmentDistance, raceDistanceToFinish, raceAverageSpeed, segmentAvgSpeed, currentSegmentSpeed, currentSegmentLength
+				raceLength, raceDuration, globalDistance, racePassedDistance, segmentDistance, 
+				raceDistanceToFinish, raceAverageSpeed, segmentAvgSpeed, currentSegmentSpeed, currentSegmentLength
 			};
 
-
-			Counters["Group0"] = group0;
-			Counters["Group1"] = group1;
-			Counters["Group2"] = group2;
-			Counters["Group3"] = group3;
+			groups.Add(new CountersGroup { Counters = group0, Weight = 0.5 });
+			groups.Add(new CountersGroup { Counters = group1 });
+			groups.Add(new CountersGroup { Counters = group2 });
+			groups.Add(new CountersGroup { Counters = group3 });
 
 			HiddenCounters = new List<IRaceCounter>();
 			HiddenCounters.AddRange(new IRaceCounter[]
@@ -336,7 +336,7 @@ namespace LegendDrive.Model
 			};
 
 			AllCounters = HiddenCounters
-				.Union(Counters.Values.SelectMany(x => x))
+				.Union(Groups.SelectMany(x => x.Counters))
 				.Distinct()
 				.ToList();
 
