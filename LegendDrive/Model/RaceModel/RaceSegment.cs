@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using LegendDrive.Counters;
@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 
 namespace LegendDrive.Model.RaceModel
 {
-	public class RaceSegment : BaseBindingObject, ISupportStatePersistance 
+	public class RaceSegment : BaseBindingObject<RaceSegment>, ISupportStatePersistance 
 	{
 		public RaceSegment()
 		{
@@ -18,7 +18,7 @@ namespace LegendDrive.Model.RaceModel
 			get; set;
 		}
 
-		public double Distance
+		public double Length
 		{
 			get; set;
 		}
@@ -32,7 +32,7 @@ namespace LegendDrive.Model.RaceModel
 		{
 			get
 			{
-				var rideTime = TimeSpan.FromHours(Distance / 1000 / Speed);
+				var rideTime = TimeSpan.FromHours(Length / 1000 / Speed);
 				return rideTime > Timeout ? rideTime : Timeout;
 			}
 		}
@@ -54,7 +54,7 @@ namespace LegendDrive.Model.RaceModel
 				if (_isCurrent != value)
 				{
 					_isCurrent = value;
-					OnPropertyChanged("IsCurrent");
+					RaisePropertyChanged(nameof(IsCurrent));
 				}
 			}
 		}
@@ -71,23 +71,14 @@ namespace LegendDrive.Model.RaceModel
 				if (_passed != value)
 				{
 					_passed = value;
-					OnPropertyChanged("Passed");
+					RaisePropertyChanged(nameof(Passed));
 				}
-			}
-		}
-
-		public string TimeoutStr
-		{
-			get
-			{
-				var minutes = (int)Timeout.TotalMinutes;
-				return (minutes == 0 ? String.Empty : minutes.ToString("g")).PadLeft(3);
 			}
 		}
 
 		public override string ToString()
 		{
-			return string.Format("{0} {1} {2}", Distance, Speed, Timeout.TotalMinutes);
+			return string.Format("{0} {1} {2}", Length, Speed, Timeout.TotalMinutes);
 		}
 
 		public static IEnumerable<RaceSegment> Parse(string newDataText)
@@ -102,7 +93,7 @@ namespace LegendDrive.Model.RaceModel
 				//neutralization enter
 				var segment = new RaceSegment()
 				{
-					Distance = DoubleParse(parts[0]),
+					Length = DoubleParse(parts[0]),
 					Speed = DoubleParse(parts[1]),
 					Timeout = TimeSpan.FromMinutes(DoubleParse(parts[2]))
 				};
@@ -114,7 +105,7 @@ namespace LegendDrive.Model.RaceModel
 			{
 				var segment = new RaceSegment()
 				{
-					Distance = DoubleParse(parts[0]),
+					Length = DoubleParse(parts[0]),
 					Speed = DoubleParse(parts[1]),
 				};
 				yield return segment;
@@ -125,7 +116,7 @@ namespace LegendDrive.Model.RaceModel
 			{
 				var segment = new RaceSegment()
 				{
-					Distance = DoubleParse(parts[i]),
+					Length = DoubleParse(parts[i]),
 				};
 				yield return segment;
 			}
@@ -143,7 +134,7 @@ namespace LegendDrive.Model.RaceModel
 		{
 			var obj = new JObject();
 			obj.AddValue(nameof(No), No);
-			obj.AddValue(nameof(Distance), Distance);
+			obj.AddValue(nameof(Length), Length);
 			obj.AddValue(nameof(Speed), Speed);
 			obj.AddValue(nameof(Timeout), Timeout);
 			return obj;
@@ -152,15 +143,15 @@ namespace LegendDrive.Model.RaceModel
 		public void LoadState(JObject obj)
 		{
 			No = obj.GetValue<int>(nameof(No));
-			Distance = obj.GetValue<double>(nameof(Distance));
+			Length = obj.GetValue<double>(nameof(Length));
 			Speed = obj.GetValue<double>(nameof(Speed));
 			Timeout = obj.GetValue<TimeSpan>(nameof(Timeout));
 		}
 
-		protected override void OnPropertyChanged(string propertyName = null)
+		protected override void RaisePropertyChanged(string propertyName = null)
 		{
-			base.OnPropertyChanged(propertyName);
-			base.OnPropertyChanged("."); //workaround 
+			base.RaisePropertyChanged(propertyName);
+			//base.RaisePropertyChanged(nameof(.)); //workaround 
 		}
 	}
 }

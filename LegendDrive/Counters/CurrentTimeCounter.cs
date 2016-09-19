@@ -15,7 +15,7 @@ namespace LegendDrive.Counters
 		public CurrentTimeCounter(string name)
 			: base(name)
 		{
-			timer = new Timer(x => OnPropertyChanged("Value"), null, 0, 1000);
+			timer = new Timer(x => RaisePropertyChanged(nameof(Value)), null, 0, 1000);
 		}
 
 		public override bool IsRunning

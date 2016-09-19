@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -55,7 +55,7 @@ namespace LegendDrive.Counters
 			{
 				calccount++;
 				elapsed += accuracy;
-				OnPropertyChanged("Value");
+				RaisePropertyChanged(nameof(Value));
 			}
 		}
 
@@ -75,7 +75,7 @@ namespace LegendDrive.Counters
 		{
 			history.Push(elapsed);
 			elapsed = 0;
-			OnPropertyChanged("Value");
+			RaisePropertyChanged(nameof(Value));
 		}
 
 		public void Pop()
@@ -83,7 +83,7 @@ namespace LegendDrive.Counters
 			if (history.Any())
 			{
 				elapsed = elapsed + history.Pop();
-				OnPropertyChanged("Value");
+				RaisePropertyChanged(nameof(Value));
 			}
 		}
 
@@ -101,7 +101,7 @@ namespace LegendDrive.Counters
 			elapsed = obj.GetValue<long>(nameof(elapsed));
 			history = obj.GetValue<Stack<long>>(nameof(history));
 			base.LoadState(obj.GetValue<JObject>("base"));
-			OnPropertyChanged("Value");
+			RaisePropertyChanged(nameof(Value));
 		}
 	}
 }

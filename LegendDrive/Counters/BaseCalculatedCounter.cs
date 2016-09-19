@@ -66,7 +66,7 @@ namespace LegendDrive.Counters
 		protected virtual void Invalidate()
 		{
 			isUpToDate = false;
-			OnPropertyChanged("Value");
+			RaisePropertyChanged(nameof(Value));
 		}
 
 		public override void Reset()

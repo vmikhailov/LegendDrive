@@ -14,7 +14,7 @@ using Xamarin.Forms;
 
 namespace LegendDrive.Model
 {
-	public class GlobalModel : BaseBindingObject
+	public class GlobalModel : BaseBindingObject<GlobalModel>
 	{
 		public NumpadModel Numpad { get; set; }
 
@@ -217,7 +217,7 @@ namespace LegendDrive.Model
 		private void ProcessNewLocation(LocationData loc)
 		{
 			LastLocaton = loc;
-			OnPropertyChanged("LastLocation");
+			RaisePropertyChanged(nameof(LastLocaton));
 			CountersGroup.ProcessNewLocation(loc);
 		}
 

@@ -134,7 +134,7 @@ namespace LegendDrive.Model
 
 			var currentSegmentLength = new TriggeredFuncCounter<Race, double?>("Length of segment").With(x =>
 			{
-				x.BindTo(model.Race, y => y.CurrentSegment?.Distance);
+				x.BindTo(model.Race, y => y.CurrentSegment?.Length);
 				x.AddTrigger("CurrentSegment", model.Race);
 			});
 
@@ -162,7 +162,7 @@ namespace LegendDrive.Model
 			{
 				x.BindTo(model.Race, y =>
 				{
-					return y.Segments.TakeWhile(z => z.Passed).Sum(z => z.Distance)
+					return y.Segments.TakeWhile(z => z.Passed).Sum(z => z.Length)
 							+ segmentDistance.Value;
 				});
 				x.AddTrigger("Segments", model.Race);
@@ -196,7 +196,7 @@ namespace LegendDrive.Model
 						var timeLeft = timerAtEndOfSegment - timerFromStart;
 						var remainingRaceTimeSeconds = raceRemainingTime.Value.GetValue().TotalSeconds;
 						if (timeLeft?.TotalSeconds <= 1) return remainingRaceTimeSeconds > 0 ? 1000 : 0;
-						var distanceLeft = y.CurrentSegment?.Distance - segmentDistance?.Value;
+						var distanceLeft = y.CurrentSegment?.Length - segmentDistance?.Value;
 						var speed = distanceLeft / timeLeft?.TotalSeconds * 3.6;
 						if (speed >= 90) return 1000;
 						if (speed <= 1) return 0;
@@ -245,7 +245,7 @@ namespace LegendDrive.Model
 				{
 					var speed = segmentFiveSecondsSpeed.Value;//segmentFiveSecondsSpeed.TypedValue;
 					var timerFromStart = raceTimer.Value;
-					var distanceLeft = y.CurrentSegment?.Distance - segmentDistance?.Value;
+					var distanceLeft = y.CurrentSegment?.Length - segmentDistance?.Value;
 
 					if (speed <= 0.5 || !timerFromStart.HasValue || !distanceLeft.HasValue) return TimeSpan.FromMinutes(30);
 					var timeToEndOfSeg = distanceLeft.Value / speed * 3.6; //relative time TO End Of Segment With Current Speed

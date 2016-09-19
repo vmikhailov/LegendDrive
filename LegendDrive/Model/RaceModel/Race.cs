@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 
 namespace LegendDrive.Model.RaceModel
 {
-	public class Race : BaseBindingObject, ISupportStatePersistance
+	public class Race : BaseBindingObject<Race>, ISupportStatePersistance
 	{
 		private Object _syncObject = new object();
 		public Race()
@@ -46,7 +46,7 @@ namespace LegendDrive.Model.RaceModel
 		{
 			get
 			{
-				return Segments.Sum(y => y.Distance);
+				return Segments.Sum(y => y.Length);
 			}
 		}
 
@@ -129,8 +129,8 @@ namespace LegendDrive.Model.RaceModel
 				if (_isRunning != value)
 				{
 					_isRunning = value;
-					OnPropertyChanged("IsRunning");
-					OnPropertyChanged("CanGoBack");
+					RaisePropertyChanged(nameof(IsRunning));
+					RaisePropertyChanged(nameof(CanGoBack));
 				}
 			}
 		}
@@ -205,21 +205,21 @@ namespace LegendDrive.Model.RaceModel
 		private void OnTurnsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			SyncTurnsAndSegments();
-			OnPropertyChanged("Turns");
-			OnPropertyChanged("CanGoBack");
+			RaisePropertyChanged(nameof(Turns));
+			RaisePropertyChanged(nameof(CanGoBack));
 			if (Turns.Count <= 1)
 			{
-				OnPropertyChanged("StartTime");
+				RaisePropertyChanged(nameof(StartTime));
 			}
 		}
 
 		private void OnSegmentsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			SyncTurnsAndSegments();
-			OnPropertyChanged("Segments");
-			OnPropertyChanged("DurationOfRace");
-			OnPropertyChanged("LengthOfRace");
-			OnPropertyChanged("CanDelete");
+			RaisePropertyChanged(nameof(Segments));
+			RaisePropertyChanged(nameof(DurationOfRace));
+			RaisePropertyChanged(nameof(LengthOfRace));
+			RaisePropertyChanged(nameof(CanDelete));
 		}
 
 		private void SyncTurnsAndSegments()
@@ -240,9 +240,9 @@ namespace LegendDrive.Model.RaceModel
 				_currentSegment = null;
 				if (prevCurrentSegment != CurrentSegment)
 				{
-					OnPropertyChanged("CurrentSegment");
-					OnPropertyChanged("TimeAtTheEndOfCurrentSegment");
-					OnPropertyChanged("TimeOffsetAtTheEndOfCurrentSegment");
+					RaisePropertyChanged(nameof(CurrentSegment));
+					RaisePropertyChanged(nameof(TimeAtTheEndOfCurrentSegment));
+					RaisePropertyChanged(nameof(TimeOffsetAtTheEndOfCurrentSegment));
 				}
 			}
 		}

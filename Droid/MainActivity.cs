@@ -16,7 +16,6 @@ namespace LegendDrive.Droid
 	{
 		LocationService _locationService;
 		VibrationService _vibrationService;
-		App _app;
 
 		protected override void OnCreate(Bundle bundle)
 		{
@@ -24,7 +23,7 @@ namespace LegendDrive.Droid
 			//TabLayoutResource = Resource.Layout.Tabbar;
 			//ToolbarResource = Resource.Layout.Toolbar;
 			//RequestWindowFeature(WindowFeatures.NoTitle);
-			//RequestWindowFeature(WindowFeatures.ActionBar);
+			RequestWindowFeature(WindowFeatures.ActionBar);
 
 			base.OnCreate(bundle);
 			global::Xamarin.Forms.Forms.Init(this, bundle);
@@ -57,15 +56,15 @@ namespace LegendDrive.Droid
 			_locationService.OnPause();
 		}
 	
-		public override void OnWindowFocusChanged(bool hasFocus)
-		{
-			base.OnWindowFocusChanged(hasFocus);
-			if (CurrentFocus != null)
-			{ 
-				CurrentFocus.SystemUiVisibility = 
-					(StatusBarVisibility)(SystemUiFlags.ImmersiveSticky | SystemUiFlags.HideNavigation);
-			}
-		}
+		//public override void OnWindowFocusChanged(bool hasFocus)
+		//{
+		//	base.OnWindowFocusChanged(hasFocus);
+		//	if (CurrentFocus != null)
+		//	{ 
+		//		CurrentFocus.SystemUiVisibility = 
+		//			(StatusBarVisibility)(SystemUiFlags.ImmersiveSticky | SystemUiFlags.HideNavigation);
+		//	}
+		//}
 	}
 }
 

@@ -18,7 +18,17 @@ namespace LegendDrive.Counters
 
 		public override string ValueString
 		{
-			get { return Value?.ToString("#,0", NumberFormatInfo); }
+			get
+			{
+				if (Math.Abs(Value.GetValueOrDefault()) > 1000)
+				{
+					return (Value.Value/1000).ToString("#,0k", NumberFormatInfo);
+				}
+				else
+				{
+					return Value?.ToString("#,0", NumberFormatInfo);
+				}
+			}
 		}
 
 		public double CriticalThreshold { get; set; } = 0.5;

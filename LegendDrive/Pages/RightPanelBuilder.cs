@@ -5,16 +5,20 @@ using System.Linq;
 using LegendDrive.Counters.Interfaces;
 using LegendDrive.Model;
 using LegendDrive.Model.RaceModel;
+using LegendDrive.Collections;
 using Xamarin.Forms;
+using LegendDrive.Model.ViewModel;
 
 namespace LegendDrive
 {
 	public class RightPanelBuilder : IViewBuilder
 	{
 		GlobalModel model;
+		RaceViewModel racevm;
 		public RightPanelBuilder(GlobalModel model)
 		{
 			this.model = model;
+			racevm = new RaceViewModel(model.Race);
 		}
 
 		public View Build()
@@ -36,7 +40,7 @@ namespace LegendDrive
 		{
 			var lv = new ListView()
 			{
-				ItemsSource = model.Race.Segments,
+				ItemsSource = racevm.Segments,
 				RowHeight = UIConfiguration.ButtonHeight / 2,
 				HasUnevenRows = true,
 				//SeparatorVisibility = SeparatorVisibility.None,
@@ -44,22 +48,16 @@ namespace LegendDrive
 				ItemTemplate = new DataTemplate(() =>
 				{
 					// Create views with bindings for displaying each property.
-					Func<string, int, LayoutOptions, View> newLabel = (prop, font, align) =>
+					Func<string, string, LayoutOptions, View> newLabel = (prop, fontProp, align) =>
 					{
 						var l = new Label()
 						{
 							TextColor = UIConfiguration.CounterColors[CounterColor.White],
 							HorizontalOptions = align,
-							FontSize = font,
 							FontFamily = "OpenSans"
 						};
 						l.SetBinding(Label.TextProperty, prop);
-						l.SetBinding(Label.FontSizeProperty,
-									 FuncBinding.Create<bool, double>("IsCurrent", x => x ? font*1.5 : font));
-						//l.SetBinding(Label.TextColorProperty,
-						//             FuncBinding.Create<bool, Color>("IsCurrent", x => x ? Color.Red : Color.White));
-						//l.SetBinding(Label.BackgroundColorProperty,
-						//             FuncBinding.Create<bool, Color>("IsCurrent", x => x ? UIConfiguration.ButtonColor : Color.White));
+						l.SetBinding(Label.FontSizeProperty, fontProp);
 						return l;
 					};
 
@@ -86,43 +84,36 @@ namespace LegendDrive
 					{
 						Padding = new Thickness(2, 0),
 						Spacing = 0,
-						BackgroundColor = Color.Red.WithSaturation(0.1),
 						Orientation = StackOrientation.Horizontal,
 						Children =
 						{
-							//newLabel("No", segmentListNoFontSize, LayoutOptions.Center),
-							centerStack(newLabel("No", UIConfiguration.SegmentListNoFontSize, LayoutOptions.CenterAndExpand), UIConfiguration.SegmentListNoSize),
+							centerStack(newLabel(nameof(RaceSegmentViewModel.No), 
+							                     nameof(RaceSegmentViewModel.FontSizeNo),
+							                     LayoutOptions.CenterAndExpand), UIConfiguration.SegmentListNoSize),
 							newBox(),
-							centerStack(newLabel("Distance", UIConfiguration.SegmentListLengthFontSize, LayoutOptions.CenterAndExpand), UIConfiguration.SegmentListLengthSize),
+							centerStack(newLabel(nameof(RaceSegmentViewModel.Length), 
+							                     nameof(RaceSegmentViewModel.FontSizeLength),
+							                     LayoutOptions.CenterAndExpand), UIConfiguration.SegmentListLengthSize),
 							newBox(),
-							centerStack(newLabel("Speed", UIConfiguration.SegmentListSpeedFontSize, LayoutOptions.CenterAndExpand), UIConfiguration.SegmentListSpeedSize),
+							centerStack(newLabel(nameof(RaceSegmentViewModel.Speed), 
+							                     nameof(RaceSegmentViewModel.FontSizeSpeed), 
+							                     LayoutOptions.CenterAndExpand), UIConfiguration.SegmentListSpeedSize),
 							newBox(),
-							centerStack(newLabel("TimeoutStr", UIConfiguration.SegmentListTimeoutFontSize, LayoutOptions.CenterAndExpand), UIConfiguration.SegmentListTimeoutSize),
+							centerStack(newLabel(nameof(RaceSegmentViewModel.Timeout), 
+							                     nameof(RaceSegmentViewModel.FontSizeTimeout), 
+							                     LayoutOptions.CenterAndExpand), UIConfiguration.SegmentListTimeoutSize),
 						},
 					};
-					stack.SetBinding(VisualElement.HeightRequestProperty, 
-					                 FuncBinding.Create<RaceSegment, double>(".", x =>
-									 {
-										 if (x == null) return 32;
-										 if (x.IsCurrent) return UIConfiguration.LargeButtonHeight;
-										 return 32;
-									 }));
-					stack.SetBinding(VisualElement.BackgroundColorProperty,
-					                 FuncBinding.Create<RaceSegment, Color>(".", x =>
-									 {
-										 if (x == null) return Color.Black;
-										 if (x.IsCurrent) return UIConfiguration.ButtonColor;
-										 return x.Passed ? UIConfiguration.EnabledCounterBackground : Color.Black;
-									 }));
-
+					stack.SetBinding(VisualElement.HeightRequestProperty, nameof(RaceSegmentViewModel.ListItemHeight));
+					stack.SetBinding(VisualElement.BackgroundColorProperty, nameof(RaceSegmentViewModel.BackgroundColor));
+					                
 					return new ViewCell { View = stack };
 				}),
-				BindingContext = model.Race
+				BindingContext = racevm
 			};
-			lv.SeparatorVisibility = SeparatorVisibility.None;
-
-			lv.SetBinding(ListView.SelectedItemProperty,
-						  new Binding("CurrentSegment", BindingMode.OneWay));
+			//lv.SeparatorVisibility = SeparatorVisibility.None;
+			//lv.SetBinding(ListView.ItemsSourceProperty, nameof(RaceViewModel.Segments));
+			lv.SetBinding(ListView.SelectedItemProperty, nameof(RaceViewModel.CurrentSegment));
 
 			lv.ItemSelected += (sender, e) =>
 			{
@@ -139,8 +130,8 @@ namespace LegendDrive
 				if (e.Action == NotifyCollectionChangedAction.Add)
 				{
 					var ni = e.NewItems;
-					var item = ni.OfType<RaceSegment>()
-					              .Union(ni.OfType<IEnumerable<RaceSegment>>().SelectMany(y => y))
+					var item = ni.OfType<RaceSegmentViewModel>()
+					              .Union(ni.OfType<IEnumerable<RaceSegmentViewModel>>().SelectMany(y => y))
 					              .LastOrDefault();
 					if (item != null)
 					{
@@ -179,7 +170,7 @@ namespace LegendDrive
 				VerticalTextAlignment = TextAlignment.Center,
 				BindingContext = model.Numpad
 			};
-			lbl.SetBinding(Label.TextProperty, new Binding("NewDataText", BindingMode.TwoWay));
+			lbl.SetBinding(Label.TextProperty, new Binding(nameof(NumpadModel.NewDataText), BindingMode.TwoWay));
 
 			var grid = new Grid();
 			//grid.BackgroundColor = Xamarin.Forms.Color.Blue;

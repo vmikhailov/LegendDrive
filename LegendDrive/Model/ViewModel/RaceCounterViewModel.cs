@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 using LegendDrive.Counters;
@@ -7,16 +7,32 @@ using Xamarin.Forms;
 
 namespace LegendDrive.Model.ViewModel
 {
-	public class RaceCounterViewModel : BaseBindingObject
+	public class RaceCounterViewModel : BaseBindingObject<RaceCounterViewModel>, IViewModel<IRaceCounter>
 	{
 		ICommand tapCommand;
+		IRaceCounter counter;
 
-		public IRaceCounter counter;
-		public RaceCounterViewModel(IRaceCounter counter)
+		public RaceCounterViewModel()
 		{
-			this.counter = counter;
-			counter.PropertyChanged += Counter_PropertyChanged;
 			tapCommand = new Command(TapCommandHandler);
+		}
+
+		public RaceCounterViewModel(IRaceCounter counter) : this()
+		{
+			Model = counter;
+		}
+
+		public IRaceCounter Model 
+		{ 
+			get
+			{
+				return counter;
+			}
+			set
+			{
+				counter = value;
+				counter.PropertyChanged += Counter_PropertyChanged;
+			}
 		}
 
 		List<string> colorDependencies = new List<string> { "IsRunning", "IsCritical", "IsImportant", "Value" };
@@ -24,30 +40,37 @@ namespace LegendDrive.Model.ViewModel
 
 		void TapCommandHandler(object parameter)
 		{
-			if (counter.IsRunning) counter.Stop(); counter.Start();
+			if (counter.IsRunning)
+			{
+				counter.Stop();
+			}
+			else
+			{
+				counter.Start();
+			}
 		}
 
 		void Counter_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if (colorDependencies.Contains(e.PropertyName) || e.PropertyName == ".")
+			if (colorDependencies.Contains(e.PropertyName))// || e.PropertyName == ".")
 			{
-				OnPropertyChanged("Color");
+				RaisePropertyChanged(nameof(Color));
 			}
 
 			if (propertiesToBypass.Contains(e.PropertyName))
 			{
-				OnPropertyChanged(e.PropertyName);
+				RaisePropertyChanged(e.PropertyName);
 			}
 
-			if (e.PropertyName == "Size")
+			if (e.PropertyName == nameof(IRaceCounter.Size))
 			{
-				OnPropertyChanged("FontSize");
-				OnPropertyChanged("FontAttributes");
+				RaisePropertyChanged(nameof(FontSize));
+				RaisePropertyChanged(nameof(FontAttributes));
 			}
 
-			if (e.PropertyName == "IsRunning")
+			if (e.PropertyName == nameof(IRaceCounter.IsRunning))
 			{
-				OnPropertyChanged("BackgroundColor");
+				RaisePropertyChanged(nameof(BackgroundColor));
 			}
 		}
 

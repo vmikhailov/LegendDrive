@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Linq;
+using LegendDrive.Counters;
 
 namespace LegendDrive
 {
-	public class NumpadModel : INotifyPropertyChanged
+	public class NumpadModel : BaseBindingObject<NumpadModel>
 	{
-		public event PropertyChangedEventHandler PropertyChanged;
 
 		public event Func<string, bool> NewDataTextEntered;
 
@@ -22,16 +22,7 @@ namespace LegendDrive
 					return;
 				}
 				_newDataText = value;
-				OnPropertyChanged("NewDataText");
-			}
-		}
-
-		void OnPropertyChanged(string propertyName = null)
-		{
-			var handler = PropertyChanged;
-			if (handler != null)
-			{
-				handler(this, new PropertyChangedEventArgs(propertyName));
+				RaisePropertyChanged(nameof(NewDataText));
 			}
 		}
 

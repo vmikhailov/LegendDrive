@@ -1,27 +1,32 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace LegendDrive.Counters
 {
-	public class BaseBindingObject : INotifyPropertyChanged
+	public class BaseBindingObject<T> : INotifyPropertyChanged
 	{
 		public event PropertyChangedEventHandler PropertyChanged;
 		int suppressed;
 		List<string> suppressedProperties = new List<string>();
 		object syncObject = new object();
 
-		void OnPropertyChangedSingle(string propertyName = null)
+		void RaisePropertyChangedSingle(string propertyName = null)
 		{
 			var handler = PropertyChanged;
 			if (handler != null)
 			{
 				handler(this, new PropertyChangedEventArgs(propertyName));
-				//handler(this, new PropertyChangedEventArgs("."));
 			}
 		}
 
-		protected virtual void OnPropertyChanged(string propertyName = null)
+		protected virtual void RaisePropertyChanged(Expression<Func<T>> propertyExpression)
+		{
+		}
+
+		protected virtual void RaisePropertyChanged(string propertyName = null)
 		{
 			if (suppressed > 0)
 			{
@@ -32,7 +37,7 @@ namespace LegendDrive.Counters
 			}
 			else
 			{
-				OnPropertyChangedSingle(propertyName);
+				RaisePropertyChangedSingle(propertyName);
 			}
 		}
 
@@ -61,7 +66,7 @@ namespace LegendDrive.Counters
 			{
 				foreach (var propertyName in suppressedProperties.Distinct().ToList())
 				{
-					OnPropertyChangedSingle(propertyName);
+					RaisePropertyChangedSingle(propertyName);
 				}
 			}
 		}

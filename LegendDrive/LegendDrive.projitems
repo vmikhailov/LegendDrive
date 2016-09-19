@@ -57,6 +57,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Counters\BaseCalculatedCounter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Model\CountersGroup.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Model\ViewModel\RaceCounterViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\ViewModel\RaceSegmentViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\ViewModel\RaceViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Binding\DependencyHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\ViewModelObservableCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\ViewModel\IViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Model\" />
@@ -70,5 +75,6 @@
     <Folder Include="$(MSBuildThisFileDirectory)Persistance\" />
     <Folder Include="$(MSBuildThisFileDirectory)Messaging\" />
     <Folder Include="$(MSBuildThisFileDirectory)Model\ViewModel\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Binding\" />
   </ItemGroup>
 </Project>

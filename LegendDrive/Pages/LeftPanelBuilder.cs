@@ -7,10 +7,12 @@ using LegendDrive.Model.RaceModel;
 using Xamarin.Forms;
 using LegendDrive.Messaging;
 using LegendDrive.Counters.Interfaces;
+using LegendDrive.Model.ViewModel;
+using System.Collections.ObjectModel;
 
 namespace LegendDrive
 {
-	public class LeftPanelBuilder : BaseBindingObject, IViewBuilder
+	public class LeftPanelBuilder : BaseBindingObject<LeftPanelBuilder>, IViewBuilder
 	{
 		GlobalModel model;
 		public LeftPanelBuilder(GlobalModel model)
@@ -64,6 +66,10 @@ namespace LegendDrive
 			var turnButton = btnFunc("Turn", GlobalCommand.Turn);
 			turnButton.WidthRequest = UIConfiguration.LargeButtonWidth * 3;
 			turnButton.SetBinding(VisualElement.IsEnabledProperty, "IsRunning");
+			turnButton.SetBinding(Button.TextProperty,
+			                      FuncBinding.Create<ObservableCollection<TurnInfo>, string>(
+				                      "Turns", x => x.Count > 1 ? $"Turn ({x.Count - 1})" : "Turn"));
+
 
 			var deleteButton = btnFunc("Del", GlobalCommand.DelSegment);
 			deleteButton.WidthRequest = UIConfiguration.LargeButtonWidth;

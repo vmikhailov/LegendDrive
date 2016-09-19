@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 namespace LegendDrive.Counters
 {
 	[DebuggerDisplay("{Name} = {ValueString}")]
-	public abstract class BaseCounter<T> : BaseBindingObject, IRaceCounter<T>, IDisposable, ISupportStatePersistance
+	public abstract class BaseCounter<T> : BaseBindingObject<BaseCounter<T>>, IRaceCounter<T>, IDisposable, ISupportStatePersistance
 	{
 		private string name;
 		private bool important;
@@ -93,7 +93,7 @@ namespace LegendDrive.Counters
 				if (size != value)
 				{
 					size = value;
-					OnPropertyChanged("Size");
+					RaisePropertyChanged(nameof(Size));
 				}
 			}
 		}
@@ -106,7 +106,7 @@ namespace LegendDrive.Counters
 				if (color != value)
 				{
 					color = value;
-					OnPropertyChanged("Color");
+					RaisePropertyChanged(nameof(Color));
 				}
 			}
 		}
@@ -117,7 +117,7 @@ namespace LegendDrive.Counters
 			if (!running)
 			{
 				running = true;
-				OnPropertyChanged("IsRunning");
+				RaisePropertyChanged(nameof(IsRunning));
 			}
 		}
 
@@ -126,7 +126,7 @@ namespace LegendDrive.Counters
 			if (running)
 			{
 				running = false;
-				OnPropertyChanged("IsRunning");
+				RaisePropertyChanged(nameof(IsRunning));
 			}
 		}
 
@@ -140,7 +140,7 @@ namespace LegendDrive.Counters
 			if (important != value)
 			{
 				important = value;
-				OnPropertyChanged("IsImportant");
+				RaisePropertyChanged(nameof(IsImportant));
 			}
 		}
 
@@ -149,7 +149,7 @@ namespace LegendDrive.Counters
 			if (critical != value)
 			{
 				critical = value;
-				OnPropertyChanged("IsCritical");
+				RaisePropertyChanged(nameof(IsCritical));
 			}
 		}
 
@@ -163,15 +163,15 @@ namespace LegendDrive.Counters
 		public virtual void LoadState(JObject obj)
 		{
 			running = obj.GetValue<bool>(nameof(running));
-			OnPropertyChanged("IsRunning");
+			RaisePropertyChanged(nameof(IsRunning));
 		}
 
-		protected override void OnPropertyChanged(string propertyName = null)
+		protected override void RaisePropertyChanged(string propertyName = null)
 		{
-			base.OnPropertyChanged(propertyName);
-			if (propertyName == "Value")
+			base.RaisePropertyChanged(propertyName);
+			if (propertyName == nameof(Value))
 			{
-				base.OnPropertyChanged("DebugString");
+				base.RaisePropertyChanged(nameof(DebugString));
 			}
 		}
 	}
