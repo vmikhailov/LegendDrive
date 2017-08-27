@@ -124,7 +124,7 @@ namespace LegendDrive
 								  Constraint.RelativeToParent((parent) => 0));
 
 			relative.Children.Add(labelDebug,
-								  Constraint.RelativeToParent((parent) => 0),
+			                      Constraint.Constant(0),
 								  Constraint.RelativeToParent((parent) => parent.Height - labelDebug.Height - 2),
 			                      Constraint.RelativeToParent((parent) => parent.Width - 2));
 			                      //Constraint.Constant(50));

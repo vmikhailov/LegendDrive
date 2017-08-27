@@ -95,7 +95,7 @@ namespace LegendDrive.Model.RaceModel
 				{
 					Length = DoubleParse(parts[0]),
 					Speed = DoubleParse(parts[1]),
-					Timeout = TimeSpan.FromMinutes(DoubleParse(parts[2]))
+					Timeout = ParseTimeSpan(parts[2])
 				};
 				yield return segment;
 				yield break;
@@ -121,6 +121,19 @@ namespace LegendDrive.Model.RaceModel
 				yield return segment;
 			}
 			yield break;
+		}
+
+		private static TimeSpan ParseTimeSpan(string str)
+		{
+			if (str.Contains(".."))
+			{
+				var parts = str.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+				return new TimeSpan(0, Int32.Parse(parts[0]), parts.Length > 1 ? Int32.Parse(parts[1]) : 0);
+			}
+			else
+			{
+				return TimeSpan.FromMinutes(DoubleParse(str));
+			}
 		}
 
 		private static Double DoubleParse(string str)

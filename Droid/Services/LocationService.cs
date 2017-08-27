@@ -12,6 +12,7 @@ namespace LegendDrive.Droid.Services
 	{
 		LocationManager _locationManager;
 		string _providerName;
+		int minDistance = 0;
 
 		public LocationService(LocationManager manager)
 		{
@@ -34,7 +35,7 @@ namespace LegendDrive.Droid.Services
 			_providerName = _locationManager.GetBestProvider(criteriaForLocationService, false);
 			if (_providerName != null)
 			{
-				_locationManager.RequestLocationUpdates(_providerName, 0, 1, this);
+				_locationManager.RequestLocationUpdates(_providerName, 0, minDistance, this);
 				var lastLocation = _locationManager.GetLastKnownLocation(_providerName);
 				OnLocationChanged(lastLocation);
 			}
@@ -46,13 +47,13 @@ namespace LegendDrive.Droid.Services
 			if (cmd.Code == GlobalCommandCodes.GPSReset)
 			{
 				Init();
-				_locationManager.RequestLocationUpdates(_providerName, 0, 1, this);
+				_locationManager.RequestLocationUpdates(_providerName, 0, minDistance, this);
 			}
 		}
 
 		public void OnResume()
 		{
-			_locationManager.RequestLocationUpdates(_providerName, 0, 1, this);
+			_locationManager.RequestLocationUpdates(_providerName, 0, minDistance, this);
 		}
 
 		public void OnPause()
@@ -63,8 +64,10 @@ namespace LegendDrive.Droid.Services
 
 		public void OnLocationChanged(Location location)
 		{
-			if (location == null) return;
-			MessagingHub.Send(QueueType.Location, LocationData.CreateFrom(location));
+			if (location != null)
+			{
+				MessagingHub.Send(QueueType.Location, LocationData.CreateFrom(location));
+			}
 		}
 
 		public void OnProviderDisabled(string provider)
@@ -77,7 +80,10 @@ namespace LegendDrive.Droid.Services
 			if (_providerName == provider)
 			{
 				var location = _locationManager.GetLastKnownLocation(provider);
-				MessagingHub.Send(QueueType.Location, LocationData.CreateFrom(location));
+				if (location != null)
+				{
+					MessagingHub.Send(QueueType.Location, LocationData.CreateFrom(location));
+				}
 			}
 		}
 

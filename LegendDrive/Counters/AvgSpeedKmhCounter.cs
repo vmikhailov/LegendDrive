@@ -25,7 +25,7 @@ namespace LegendDrive.Counters
 				string valueStr;
 				if (rounded < 10)
 				{
-					valueStr = rounded.ToString("0.#", NumberFormatInfo);
+					valueStr = rounded.ToString("0.0;0.0;0", NumberFormatInfo);
 				}
 				else
 				{

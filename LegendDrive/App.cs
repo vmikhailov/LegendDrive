@@ -13,23 +13,14 @@ namespace LegendDrive
 	{
 		GlobalModel model;
 		Simulator simulator; 
-		Timer _timer;
-
-
+		 
 		public App()
 		{
 			model = new GlobalModel();
-
-			//var tabs = new TabbedPage();
-			//tabs.Children.Add(new RaceMainPage(model) { Title = "Race" });
-
-			//tabs.Children.Add(new SettingsPage { Title = "Settings"});
-			//MainPage = tabs;
 			MainPage = new RaceMainPage(model);
 
 			simulator = new Simulator(model);
 			simulator.Start();
-			//_timer = new Timer(x => SaveState(), this, 15000, 15000); 
 		}
 
 		protected override void OnStart()

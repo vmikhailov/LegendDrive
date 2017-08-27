@@ -37,6 +37,14 @@ namespace LegendDrive.Counters
 		{
 			get
 			{
+				if (baseChangesCounter >= 1000)
+				{
+					baseChangesCounter = 0;
+				}
+				if (targetChangesCounter >= 1000)
+				{
+					targetChangesCounter = 0;
+				}
 				return $"{baseChangesCounter}/{targetChangesCounter}";
 			}
 		}

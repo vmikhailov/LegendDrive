@@ -7,7 +7,7 @@ namespace LegendDrive.Counters.Interfaces
 	{
 		void BindTo(TObject value, Func<TObject, TResult> getter);
 		void AddTrigger(string property, INotifyPropertyChanged obj);
-		Action<ITriggeredFuncCounter<TObject, TResult>> AfterNewValue { get; set;}
+		//Action<ITriggeredFuncCounter<TObject, TResult>> AfterNewValue { get; set;}
 		TObject BindingContext { get; set; }
 	}
 }

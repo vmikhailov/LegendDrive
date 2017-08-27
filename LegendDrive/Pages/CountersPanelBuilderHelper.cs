@@ -6,7 +6,7 @@ namespace LegendDrive
 {
 	public static class CountersPanelBuilderHelper
 	{
-		public static View BuildAdaptivePanel(IReadOnlyList<View> views, int minWidth = UIConfiguration.CounterWidth)
+		public static View BuildAdaptivePanel(IReadOnlyList<View> views, int minWidth = (int)UIConfiguration.CounterWidth)
 		{
 			var relative = new RelativeLayout()
 			{

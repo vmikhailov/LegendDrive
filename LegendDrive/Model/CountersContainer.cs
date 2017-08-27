@@ -38,25 +38,25 @@ namespace LegendDrive.Model
 			var raceDuration = new TriggeredFuncCounter<Race, TimeSpan?>("Race duration", @"{0:hh\:mm\:ss}").With(x =>
 			{
 				x.BindTo(model.Race, y => y.DurationOfRace);
-				x.AddTrigger("DurationOfRace", model.Race);
+				x.AddTrigger(nameof(Race.DurationOfRace), model.Race);
 			});
 
 			var raceStartTime = new TriggeredFuncCounter<Race, DateTime?>("Race start time", @"{0:HH\:mm\:ss}").With(x =>
 			{
 				x.BindTo(model.Race, y => y.StartTime);
-				x.AddTrigger("StartTime", model.Race);
+				x.AddTrigger(nameof(Race.StartTime), model.Race);
 			});
 
 			var raceEstimatedFinishTime = new TriggeredFuncCounter<Race, DateTime?>("Estimated finish time", @"{0:HH\:mm\:ss}").With(x =>
 			{
 				x.BindTo(model.Race, y => y.EstimatedFinishTime);
-				x.AddTrigger("EstimatedFinishTime", model.Race);
+				x.AddTrigger(nameof(Race.EstimatedFinishTime), model.Race);
 			});
 
 			var segmentTimer = new TriggeredFuncCounter<Race, TimeSpan?>("Timer at the end of segment", @"{0:hh\:mm\:ss}").With(x =>
 			{
 				x.BindTo(model.Race, y => y.TimeOffsetAtTheEndOfCurrentSegment);
-				x.AddTrigger("TimeOffsetAtTheEndOfCurrentSegment", model.Race);
+				x.AddTrigger(nameof(Race.TimeOffsetAtTheEndOfCurrentSegment), model.Race);
 			});
 
 			var timeToTurn = new RemainingTimeCounter("Time to turn").With(x =>
@@ -101,17 +101,24 @@ namespace LegendDrive.Model
 				x.AddTrigger("LastLocation", model);
 				x.AddTrigger("Value", globalCurrentTime);
 				x.Size = CounterSize.XS;
-				x.AfterNewValue = y =>
+				x.ValueChanged = y =>
 				{
-					var loc = y.BindingContext.LastLocaton;
+					var z = y as TriggeredFuncCounter<GlobalModel, string>;
+					var loc = z.BindingContext?.LastLocaton;
 					if (loc == null) return;
 					if (loc.GpsOn)
 					{
-						y.Start();
+						if (!y.IsRunning)
+						{
+							y.Start();
+						}
 					}
 					else
 					{
-						y.Stop();
+						if (y.IsRunning)
+						{
+							y.Stop();
+						}
 					}
 					var gpsage = (DateTime.Now.ToUniversalTime() - loc.Time).TotalSeconds;
 					y.SetImportant(gpsage > 5 || loc.Accuracy > 50);
@@ -123,19 +130,19 @@ namespace LegendDrive.Model
 			var currentSegmentNo = new TriggeredFuncCounter<Race, int?>("Segment no", "{0}").With(x =>
 			{
 				x.BindTo(model.Race, y => y.CurrentSegment?.No);
-				x.AddTrigger("CurrentSegment", model.Race);
+				x.AddTrigger(nameof(Race.CurrentSegment), model.Race);
 			});
 
 			var currentSegmentSpeed = new TriggeredFuncCounter<Race, double?>("Speed at segment").With(x =>
 			{
 				x.BindTo(model.Race, y => y.CurrentSegment?.Speed);
-				x.AddTrigger("CurrentSegment", model.Race);
+				x.AddTrigger(nameof(Race.CurrentSegment), model.Race);
 			});
 
 			var currentSegmentLength = new TriggeredFuncCounter<Race, double?>("Length of segment").With(x =>
 			{
 				x.BindTo(model.Race, y => y.CurrentSegment?.Length);
-				x.AddTrigger("CurrentSegment", model.Race);
+				x.AddTrigger(nameof(Race.CurrentSegment), model.Race);
 			});
 
 
@@ -148,7 +155,7 @@ namespace LegendDrive.Model
 			var raceLength = new TriggeredFuncCounter<Race, double?>("Length of race").With(x =>
 			{
 				x.BindTo(model.Race, y => y.LengthOfRace);
-				x.AddTrigger("LengthOfRace", model.Race);
+				x.AddTrigger(nameof(Race.LengthOfRace), model.Race);
 			});
 
 			var segmentDistanceToTurn = new RemainingDistanceCounter("Distance to turn").With(x =>
@@ -165,8 +172,8 @@ namespace LegendDrive.Model
 					return y.Segments.TakeWhile(z => z.Passed).Sum(z => z.Length)
 							+ segmentDistance.Value;
 				});
-				x.AddTrigger("Segments", model.Race);
-				x.AddTrigger("Value", segmentDistance);
+				x.AddTrigger(nameof(Race.Segments), model.Race);
+				x.AddTrigger(nameof(IRaceCounter<double?>.Value), segmentDistance);
 			});
 
 			var raceDistanceToFinish = new RemainingDistanceCounter("Distance to finish").With(x =>
@@ -179,13 +186,14 @@ namespace LegendDrive.Model
 			//SPEED (6)
 			var raceAverageSpeed = new AvgSpeedKmhCounter("Avg race speed", 86400);
 			var segmentAvgSpeed = new AvgSpeedKmhCounter("Avg segment speed", 86400);
-			var segmentFiveSecondsSpeed = new AvgSpeedKmhCounter("Current speed", 5)
+			var segment15SecondsSpeed = new AvgSpeedKmhCounter("Avg segment speed 30 sec", 15);
+			var segment5SecondsSpeed = new AvgSpeedKmhCounter("Current speed", 5)
 			{
 				Size = CounterSize.XXL,
 				Color = CounterColor.Green
-			};
+			}.With(x => x.AddTrigger("Value", raceTimer));
 
-			var recommendedSpeed = new TriggeredFuncCounter<Race, double?>("Recommended speed value", "{0}").With(x =>
+			var recommendedSpeed2 = new TriggeredFuncCounter<Race, double?>("Recommended speed value", "{0}").With(x =>
 			{
 				x.BindTo(model.Race, y =>
 				{
@@ -204,10 +212,35 @@ namespace LegendDrive.Model
 					}
 					return 0;
 				});
-				x.AddTrigger("CurrentSegment, IsRunning", model.Race);
-				x.AddTrigger("Value", raceTimer);
-				x.AddTrigger("Value", raceRemainingTime);
+				x.AddTrigger(nameof(Race.CurrentSegment), model.Race);
+				x.AddTrigger(nameof(Race.IsRunning), model.Race);
+				x.AddTrigger(nameof(IRaceCounter<TimeSpan?>.Value), raceTimer);
+				x.AddTrigger(nameof(IRaceCounter<TimeSpan?>.Value), raceRemainingTime);
 			});
+
+			var recommendedSpeed = new TriggeredFuncCounter<Race, double?>("Recommended speed value", "{0}").With(x =>
+			{
+				x.BindTo(model.Race, y =>
+				{
+					if (y.IsRunning)
+					{
+						var timeLeft = timeToTurn.Value;
+						var remainingRaceTimeSeconds = raceRemainingTime.Value.GetValue().TotalSeconds;
+						if (timeLeft?.TotalSeconds <= 1) return remainingRaceTimeSeconds > 0 ? 1000 : 0;
+						var distanceLeft = segmentDistanceToTurn.Value;
+						var speed = distanceLeft / timeLeft?.TotalSeconds * 3.6;
+						if (speed >= 90) return 1000;
+						if (speed <= 1) return 0;
+						return speed;
+					}
+					return 0;
+				});
+				x.AddTrigger(nameof(Race.CurrentSegment), model.Race);
+				x.AddTrigger(nameof(Race.IsRunning), model.Race);
+				x.AddTrigger(nameof(IRaceCounter<TimeSpan?>.Value), raceTimer);
+				x.AddTrigger(nameof(IRaceCounter<TimeSpan?>.Value), raceRemainingTime);
+			});
+
 
 			var recommendedSpeedString = new TriggeredFuncCounter<Race, string>("Recommended speed", "{0}").With(x =>
 			{
@@ -220,10 +253,10 @@ namespace LegendDrive.Model
 					return speed.ToString();
 				});
 				x.AddTrigger("Value", recommendedSpeed);
-				x.AddTrigger("Value", segmentFiveSecondsSpeed);
+				x.AddTrigger("Value", segment5SecondsSpeed);
 				x.Size = CounterSize.XXL;
 				x.SetImportant(true);
-				x.AfterNewValue = y =>
+				x.ValueChanged = y =>
 				{
 					var speed = (int)recommendedSpeed.Value.GetValue();
 					if (speed == 0 || speed == 1000)
@@ -231,7 +264,7 @@ namespace LegendDrive.Model
 						x.SetCritical(true);
 						return;
 					}
-					var avgSpeed = segmentFiveSecondsSpeed.Value;
+					var avgSpeed = segment5SecondsSpeed.Value;
 					var rel = avgSpeed > 0.5 ? Math.Abs(speed / avgSpeed) : 1000;
 					x.SetImportant(rel > 1.5 || rel < 0.75);
 					x.SetCritical(rel > 2 || rel < 1 / 2);
@@ -243,11 +276,12 @@ namespace LegendDrive.Model
 			{
 				x.BindTo(model.Race, y =>
 				{
-					var speed = segmentFiveSecondsSpeed.Value;//segmentFiveSecondsSpeed.TypedValue;
+					var speed = segment5SecondsSpeed.Value;//segmentFiveSecondsSpeed.TypedValue;
+					speed = Math.Round(speed, speed >= 10 ? 0 : 1); 
 					var timerFromStart = raceTimer.Value;
 					var distanceLeft = y.CurrentSegment?.Length - segmentDistance?.Value;
 
-					if (speed <= 0.5 || !timerFromStart.HasValue || !distanceLeft.HasValue) return TimeSpan.FromMinutes(30);
+					if (speed <= 0.5 || !timerFromStart.HasValue || !distanceLeft.HasValue) return TimeSpan.FromDays(1);
 					var timeToEndOfSeg = distanceLeft.Value / speed * 3.6; //relative time TO End Of Segment With Current Speed
 
 					var time1 = timerFromStart.Value + TimeSpan.FromSeconds(timeToEndOfSeg); //time AT End Of Segment With Current Speed
@@ -262,15 +296,29 @@ namespace LegendDrive.Model
 					return TimeSpan.FromSeconds(dt);
 				});
 				x.AddTrigger("Value", recommendedSpeed);
-				x.AddTrigger("Value", segmentFiveSecondsSpeed);
+				x.AddTrigger("Value", segment5SecondsSpeed);
 				x.Size = CounterSize.XL;
 				x.SetImportant(false);
 				x.SetCritical(false);
-				x.AfterNewValue = y =>
+				x.ValueChanged = y =>
 				{
-					var seconds = Math.Abs(y.Value.TotalSeconds);
-					x.SetImportant(seconds > 30);
-					x.SetCritical(seconds > 60);
+					var seconds = y.Value.TotalSeconds;
+					if (y.Value.Days == 1) x.Color = CounterColor.Red;
+					{
+						if (seconds < -30) x.Color = CounterColor.Red;
+						if (seconds >= -30 && seconds <= 30) x.Color = CounterColor.White;
+						if (seconds > 30) x.Color = CounterColor.Green;
+					}
+					//x.SetImportant(seconds > 30);
+					//x.SetCritical(seconds > 60);
+				};
+				x.ApproximationCount = 10;
+				x.ApproximationFunction = y => 
+				{
+					if (!y.Any()) return TimeSpan.FromSeconds(0);
+					if (y.Any(z => z.Days == 1)) return TimeSpan.FromDays(1);
+					var avgSeconds = y.Select(z => z.TotalSeconds).Average();
+					return TimeSpan.FromSeconds(avgSeconds); 
 				};
 			});
 
@@ -294,7 +342,7 @@ namespace LegendDrive.Model
 
 			var group2 = new ObservableRangeCollection<IRaceCounter>()
 			{
-				segmentFiveSecondsSpeed,
+				segment5SecondsSpeed,
 				recommendedSpeedString,
 				lagLeadTime
 			};
@@ -323,7 +371,8 @@ namespace LegendDrive.Model
 				segmentAvgSpeed,
 				segmentDistance,
 				segmentEndTime,
-				segmentTimer
+				segmentTimer,
+				segment15SecondsSpeed
 			});
 
 			SegmentCounters = new List<IRaceCounter>()
@@ -332,7 +381,7 @@ namespace LegendDrive.Model
 				segmentEndTime,
 				segmentAvgSpeed,
 				segmentDistance,
-				segmentFiveSecondsSpeed
+				segment5SecondsSpeed
 			};
 
 			AllCounters = HiddenCounters

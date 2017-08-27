@@ -22,7 +22,15 @@ namespace LegendDrive.Counters
 			{
 				if (Math.Abs(Value.GetValueOrDefault()) > 1000)
 				{
-					return (Value.Value/1000).ToString("#,0k", NumberFormatInfo);
+					var val1k = (Value.Value / 1000);
+					if (Math.Abs(val1k) < 10)
+					{
+						return val1k.ToString("#.0k", NumberFormatInfo);
+					}
+					else
+					{
+						return val1k.ToString("#,0k", NumberFormatInfo);
+					}
 				}
 				else
 				{

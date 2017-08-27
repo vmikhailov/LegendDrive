@@ -204,22 +204,27 @@ namespace LegendDrive.Model.RaceModel
 
 		private void OnTurnsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
+			SuppressEvent();
+			RaisePropertyChanged(nameof(Turns)); //main object
 			SyncTurnsAndSegments();
-			RaisePropertyChanged(nameof(Turns));
 			RaisePropertyChanged(nameof(CanGoBack));
 			if (Turns.Count <= 1)
 			{
 				RaisePropertyChanged(nameof(StartTime));
 			}
+			ResumeEvents();
 		}
 
 		private void OnSegmentsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
+			SuppressEvent();
+			RaisePropertyChanged(nameof(Segments)); //main object
 			SyncTurnsAndSegments();
-			RaisePropertyChanged(nameof(Segments));
 			RaisePropertyChanged(nameof(DurationOfRace));
 			RaisePropertyChanged(nameof(LengthOfRace));
 			RaisePropertyChanged(nameof(CanDelete));
+			RaisePropertyChanged(nameof(EstimatedFinishTime));
+			ResumeEvents();
 		}
 
 		private void SyncTurnsAndSegments()

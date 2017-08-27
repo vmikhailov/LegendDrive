@@ -53,7 +53,10 @@ namespace LegendDrive.Counters
 		{
 			if (IsRunning)
 			{
-				calccount++;
+				if (++calccount >= 1000)
+				{
+					calccount = 0;
+				}
 				elapsed += accuracy;
 				RaisePropertyChanged(nameof(Value));
 			}

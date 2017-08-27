@@ -12,16 +12,16 @@ namespace LegendDrive
 
 		public const int LargeButtonWidth = 96 * 2;
 		public const int LargeButtonHeight = 64 - 3;
-		public const int LargeButtonFontSize = LargeButtonHeight / 5;
-		public const int SegmentListNoFontSize = (int)(ButtonFontSize * 0.5);
-		public const int SegmentListLengthFontSize = (int)(ButtonFontSize * 0.7);
-		public const int SegmentListSpeedFontSize = (int)(ButtonFontSize * 0.7);
-		public const int SegmentListTimeoutFontSize = (int)(ButtonFontSize * 0.5);
+		public const int LargeButtonFontSize = LargeButtonHeight / 5 * 2;
+		public const double SegmentListNoFontSize = SegmentListLengthFontSize * 0.75;
+		public const double SegmentListLengthFontSize = LargeButtonFontSize;
+		public const double SegmentListSpeedFontSize = SegmentListLengthFontSize;
+		public const double SegmentListTimeoutFontSize = SegmentListNoFontSize;
 
-		public const int SegmentListNoSize = (int)(ButtonWidth * 0.5);
-		public const int SegmentListLengthSize = (int)(ButtonWidth * 1.2);
-		public const int SegmentListSpeedSize = (int)(ButtonWidth * 0.6);
-		public const int SegmentListTimeoutSize = (int)(ButtonWidth * 0.5);
+		public const double SegmentListNoSize = (double)(ButtonWidth * 0.5);
+		public const double SegmentListLengthSize = (double)(ButtonWidth * 1.2);
+		public const double SegmentListSpeedSize = (double)(ButtonWidth * 0.6);
+		public const double SegmentListTimeoutSize = (double)(ButtonWidth * 0.5);
 
 		public const int CounterWidth = 196;
 		public const int CounterHeight = 64;
@@ -38,6 +38,8 @@ namespace LegendDrive
 
 		public static IDictionary<CounterColor, Color> CounterColors = new Dictionary<CounterColor, Color>
 		{
+
+			{ CounterColor.AbsoluteWhite, Color.FromHex("ffffff") },
 			{ CounterColor.White, Color.FromHex("bbbbbb") },
 			{ CounterColor.Blue, Color.FromHex("0072bc") },
 			{ CounterColor.Green, Color.FromHex("00cc22") },

@@ -35,14 +35,14 @@ namespace LegendDrive
 				{
 					Text = text,
 					WidthRequest = UIConfiguration.LargeButtonWidth,
-					HeightRequest = UIConfiguration.LargeButtonHeight,
+					HeightRequest = -1,
 					BackgroundColor = UIConfiguration.ButtonColor,
-					FontSize = UIConfiguration.LargeButtonFontSize * 2,
+					FontSize = UIConfiguration.LargeButtonFontSize,
 					BindingContext = model.Race,
 					Margin = new Thickness(2, 0, 2, 0),
 					BorderRadius = 0,
 					TextColor = UIConfiguration.CounterColors[CounterColor.White],
-					CommandParameter = cmdCode
+					CommandParameter = cmdCode,
 				};
 				btn.Command = normalCommand;
 				return btn;
@@ -50,8 +50,8 @@ namespace LegendDrive
 
 
 			var startFinishButton = btnFunc(null, GlobalCommand.StartFinish);
-			startFinishButton.SetBinding(Button.TextProperty, 
-			                             FuncBinding.Create<bool, string>("IsRunning", x => x ? "Finish" : "Start"));
+			startFinishButton.SetBinding(Button.TextProperty,
+										 FuncBinding.Create<bool, string>("IsRunning", x => x ? "Finish" : "Start"));
 
 			var resetButton = btnFunc("Reset", GlobalCommand.ResetAll);
 
@@ -60,42 +60,60 @@ namespace LegendDrive
 
 			var gpsButton = btnFunc("GPS", GlobalCommand.GPSReset);
 
-			var backButton = btnFunc("Back", GlobalCommand.Back);
-			backButton.SetBinding(VisualElement.IsEnabledProperty, "CanGoBack");
+			var backButton = btnFunc("Back", GlobalCommand.Back).With(x =>
+			{
+				x.SetBinding(VisualElement.IsEnabledProperty, "CanGoBack");
+			});
 
-			var turnButton = btnFunc("Turn", GlobalCommand.Turn);
-			turnButton.WidthRequest = UIConfiguration.LargeButtonWidth * 3;
-			turnButton.SetBinding(VisualElement.IsEnabledProperty, "IsRunning");
-			turnButton.SetBinding(Button.TextProperty,
-			                      FuncBinding.Create<ObservableCollection<TurnInfo>, string>(
-				                      "Turns", x => x.Count > 1 ? $"Turn ({x.Count - 1})" : "Turn"));
+			var dummyButton = btnFunc("", GlobalCommand.Turn).With(x =>
+			{
+				x.IsEnabled = false;
+				x.BackgroundColor = Color.Black;
+			});
+			                                                          
+			var turnButton = btnFunc("Turn", GlobalCommand.Turn).With(x =>
+			{
+				x.WidthRequest = UIConfiguration.LargeButtonWidth * 2;
+				x.SetBinding(VisualElement.IsEnabledProperty, "IsRunning");
+				x.SetBinding(Button.TextProperty,
+									  FuncBinding.Create<ObservableCollection<TurnInfo>, string>(
+										  "Turns", y => y.Count > 1 ? $"Turn ({y.Count - 1})" : "Turn"));
+			});
+
+			var deleteButton = btnFunc("Del", GlobalCommand.DelSegment).With(x =>
+			{
+				x.WidthRequest = UIConfiguration.LargeButtonWidth;
+				x.SetBinding(VisualElement.IsEnabledProperty, "CanDelete");
+			});
 
 
-			var deleteButton = btnFunc("Del", GlobalCommand.DelSegment);
-			deleteButton.WidthRequest = UIConfiguration.LargeButtonWidth;
-			deleteButton.SetBinding(VisualElement.IsEnabledProperty, "CanDelete");
 
-			var grid = new Grid();
-			grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(UIConfiguration.LargeButtonHeight) });
-			grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
-			grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(UIConfiguration.LargeButtonHeight) });
-			grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-			grid.ColumnSpacing = 0;
-			grid.RowSpacing = 2;
-
-			grid.Children.Add(BuildButtonsPanel(startFinishButton, resetButton, clearButton, gpsButton, backButton), 0, 0);
-
-			grid.Children.Add(new CountersPanelBuilder(model).Build(), 0, 1);
-
-			grid.Children.Add(BuildButtonsPanel(turnButton, deleteButton), 0, 2);
-
+			var grid = new Grid()
+			{
+				RowDefinitions = {
+					new RowDefinition { Height = new GridLength(UIConfiguration.LargeButtonHeight) },
+					new RowDefinition { Height = new GridLength(1, GridUnitType.Star) },
+					//new RowDefinition { Height = new GridLength(1, GridUnitType.Star) },
+					new RowDefinition { Height = new GridLength(UIConfiguration.LargeButtonHeight*1.5) }
+				},
+				ColumnDefinitions = {
+					new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }
+				},
+				ColumnSpacing = 0,
+				RowSpacing = 2
+			}.With(x =>
+			{
+				x.Children.Add(BuildButtonsPanel(startFinishButton, resetButton, clearButton, gpsButton, deleteButton), 0, 0);
+				x.Children.Add(new CountersPanelBuilder(model).Build(), 0, 1);
+				x.Children.Add(BuildButtonsPanel(dummyButton, turnButton, backButton), 0, 2);
+			});
 			return grid;
 		}
 
 		private View BuildButtonsPanel(params View[] views)
 		{
 			var grid = new Grid();
-			grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(UIConfiguration.LargeButtonHeight) });
+			grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
 			int i = 0;
 			var totalWidth = views.Sum(x => x.WidthRequest);
 			foreach(var view in views)

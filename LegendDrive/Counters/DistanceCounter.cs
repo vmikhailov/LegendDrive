@@ -47,7 +47,7 @@ namespace LegendDrive.Counters
 			{
 				if (previousLocation != null)
 				{
-					var delta = location.DistanceTo(previousLocation);
+					var delta = location.AdvancedDistanceTo(previousLocation);
 					distance += delta;
 					RaisePropertyChanged(nameof(Value));
 				}

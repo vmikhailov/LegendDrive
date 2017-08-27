@@ -13,6 +13,7 @@ namespace LegendDrive.Counters
 		T value;
 		bool isUpToDate;
 		int calccount;
+		public Action<BaseCalculatedCounter<T>> ValueChanged { get; set; }
 
 		public BaseCalculatedCounter(string name):base(name)
 		{
@@ -28,7 +29,10 @@ namespace LegendDrive.Counters
 					if (RecalcNeeded())
 					{
 						SuppressEvent();
-						calccount++;
+						if (++calccount >= 1000)
+						{
+							calccount = 0;
+						}
 						isUpToDate = true;
 						value = Calculate();
 						ResumeEvents();
@@ -61,6 +65,10 @@ namespace LegendDrive.Counters
 		protected abstract T Calculate();
 		protected virtual void OnValueChanged()
 		{
+			if (ValueChanged != null)
+			{
+				ValueChanged(this);
+			}
 		}
 
 		protected virtual void Invalidate()
@@ -68,6 +76,8 @@ namespace LegendDrive.Counters
 			isUpToDate = false;
 			RaisePropertyChanged(nameof(Value));
 		}
+
+
 
 		public override void Reset()
 		{

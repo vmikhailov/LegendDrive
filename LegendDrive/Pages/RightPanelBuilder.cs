@@ -25,7 +25,7 @@ namespace LegendDrive
 		{
 			var grid = new Grid();
 			grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
-			grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(UIConfiguration.ButtonHeight * 5.6) });
+			grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(UIConfiguration.ButtonHeight * 6 - 23) });
 			grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
 			grid.Children.Add(BuildIntervalList(), 0, 0);
@@ -41,8 +41,9 @@ namespace LegendDrive
 			var lv = new ListView()
 			{
 				ItemsSource = racevm.Segments,
-				RowHeight = UIConfiguration.ButtonHeight / 2,
+				RowHeight = (int)UIConfiguration.ButtonHeight / 2,
 				HasUnevenRows = true,
+				SeparatorColor = UIConfiguration.ButtonColor,
 				//SeparatorVisibility = SeparatorVisibility.None,
 				//BackgroundColor = Color.Red,
 				ItemTemplate = new DataTemplate(() =>
@@ -69,7 +70,7 @@ namespace LegendDrive
 							HeightRequest = 20
 						};
 
-					Func<View, int, View> centerStack = (view, size) =>
+					Func<View, double, View> centerStack = (view, size) =>
 						new StackLayout
 						{
 							VerticalOptions = LayoutOptions.Center,
@@ -104,7 +105,7 @@ namespace LegendDrive
 							                     LayoutOptions.CenterAndExpand), UIConfiguration.SegmentListTimeoutSize),
 						},
 					};
-					stack.SetBinding(VisualElement.HeightRequestProperty, nameof(RaceSegmentViewModel.ListItemHeight));
+					//stack.SetBinding(VisualElement.HeightRequestProperty, nameof(RaceSegmentViewModel.ListItemHeight));
 					stack.SetBinding(VisualElement.BackgroundColorProperty, nameof(RaceSegmentViewModel.BackgroundColor));
 					                
 					return new ViewCell { View = stack };
@@ -113,7 +114,8 @@ namespace LegendDrive
 			};
 			//lv.SeparatorVisibility = SeparatorVisibility.None;
 			//lv.SetBinding(ListView.ItemsSourceProperty, nameof(RaceViewModel.Segments));
-			lv.SetBinding(ListView.SelectedItemProperty, nameof(RaceViewModel.CurrentSegment));
+			lv.SetBinding(ListView.SelectedItemProperty, 
+			              new Binding(nameof(RaceViewModel.CurrentSegment), BindingMode.OneWay));
 
 			lv.ItemSelected += (sender, e) =>
 			{
@@ -150,14 +152,14 @@ namespace LegendDrive
 			var b1 = new BoxView()
 			{
 				Color = UIConfiguration.ButtonColor,
-				WidthRequest = UIConfiguration.PanelWidth,
+				WidthRequest = -1,
 				HeightRequest = 2,
 
 			};
 			var b2 = new BoxView()
 			{
 				Color = UIConfiguration.ButtonColor,
-				WidthRequest = UIConfiguration.PanelWidth,
+				WidthRequest = -1,//UIConfiguration.PanelWidth,
 				HeightRequest = 2
 			};
 

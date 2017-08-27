@@ -40,7 +40,8 @@ namespace LegendDrive.Counters.Interfaces
 		Orange,
 		Green,
 		Magenta,
-		Yellow
+		Yellow,
+		AbsoluteWhite
 	}
 
 	public enum CounterSize

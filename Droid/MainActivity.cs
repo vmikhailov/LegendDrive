@@ -56,15 +56,15 @@ namespace LegendDrive.Droid
 			_locationService.OnPause();
 		}
 	
-		//public override void OnWindowFocusChanged(bool hasFocus)
-		//{
-		//	base.OnWindowFocusChanged(hasFocus);
-		//	if (CurrentFocus != null)
-		//	{ 
-		//		CurrentFocus.SystemUiVisibility = 
-		//			(StatusBarVisibility)(SystemUiFlags.ImmersiveSticky | SystemUiFlags.HideNavigation);
-		//	}
-		//}
+		public override void OnWindowFocusChanged(bool hasFocus)
+		{
+			base.OnWindowFocusChanged(hasFocus);
+			if (CurrentFocus != null)
+			{ 
+				CurrentFocus.SystemUiVisibility = 
+					(StatusBarVisibility)(SystemUiFlags.ImmersiveSticky | SystemUiFlags.HideNavigation);
+			}
+		}
 	}
 }
 

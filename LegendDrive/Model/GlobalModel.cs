@@ -48,14 +48,7 @@ namespace LegendDrive.Model
 				case GlobalCommandCodes.StartFinish:
 					if (Race.IsRunning)
 					{
-						if (Race.Segments.LastOrDefault() != Race.CurrentSegment)
-						{
-							MessagingHub.Send(QueueType.AskConfirmation, GlobalCommand.AskConfirmation(cmd, "Do you really want to finish the race?"));
-						}
-						else
-						{
-							FinishRace();
-						}
+						MessagingHub.Send(QueueType.AskConfirmation, GlobalCommand.AskConfirmation(cmd, "Do you really want to finish the race?"));
 					}
 					else 
 					{
@@ -127,7 +120,7 @@ namespace LegendDrive.Model
 			if (LastLocaton != null)
 			{
 				MessagingHub.Send(QueueType.Race, new RaceEvent(LastLocaton, RaceEventTypes.Start));
-				MessagingHub.Send(new VibrateCommand("111"));
+				MessagingHub.Send(new VibrateCommand("11"));
 			}
 		}
 
@@ -141,7 +134,7 @@ namespace LegendDrive.Model
 			if (LastLocaton != null)
 			{
 				MessagingHub.Send(QueueType.Race, new RaceEvent(LastLocaton, RaceEventTypes.Finish));
-				MessagingHub.Send(new VibrateCommand("333"));
+				MessagingHub.Send(new VibrateCommand("99"));
 			}
 		}
 
@@ -163,7 +156,7 @@ namespace LegendDrive.Model
 			if (LastLocaton != null)
 			{
 				MessagingHub.Send(QueueType.Race, new RaceEvent(LastLocaton, RaceEventTypes.Turn));
-				MessagingHub.Send(new VibrateCommand("11"));
+				MessagingHub.Send(new VibrateCommand("1"));
 			}
 		}
 
@@ -185,7 +178,7 @@ namespace LegendDrive.Model
 			if (LastLocaton != null)
 			{
 				MessagingHub.Send(QueueType.Race, new RaceEvent(LastLocaton, RaceEventTypes.Back));
-				MessagingHub.Send(new VibrateCommand("33"));
+				MessagingHub.Send(new VibrateCommand("3"));
 			}
 		}
 
@@ -260,6 +253,8 @@ namespace LegendDrive.Model
 					p.LoadState(countersState[id]);
 				}
 			}
+
+
 
 			//if (Race.IsRunning)
 			//{

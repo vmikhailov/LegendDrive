@@ -43,12 +43,16 @@ namespace LegendDrive.Model.ViewModel
 		{
 			get
 			{
-				var index = race.CurrentSegment?.No ?? 0 - 1;
-				return index >= 0 ? Segments[index] : null;
+				var index = race.CurrentSegment?.No - 1;
+				return index.HasValue && index.Value < Segments.Count ? Segments[index.Value] : null;
+			}
+			set
+			{
+				//dummy set. Otherwise binding does not work.
 			}
 		}
 
-		public ObservableCollection<RaceSegmentViewModel> Segments { get; private set; }
+		public ObservableCollection<RaceSegmentViewModel> Segments { get; set; }
 
 		void Race_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
@@ -60,7 +64,6 @@ namespace LegendDrive.Model.ViewModel
 			{
 				RaisePropertyChanged(nameof(Segments));
 			}
-			//RaisePropertyChanged(".");
 		}
 
 		public ICommand CmdStartFinish { get; private set; }

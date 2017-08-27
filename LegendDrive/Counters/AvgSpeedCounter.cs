@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using LegendDrive.Counters.Interfaces;
 using LegendDrive.Model;
@@ -11,6 +13,8 @@ namespace LegendDrive.Counters
 	{
 		LinkedList<LocationData> samples;
 		int calccount;
+		int lastTick;
+		IDictionary<object, List<string>> triggers = new Dictionary<object, List<string>>();
 
 		public AvgSpeedCounter() : this("AvgSpeed", 10)
 		{
@@ -46,11 +50,14 @@ namespace LegendDrive.Counters
 			}
 		}
 
-		protected override double Calculate()
+		protected double Calculate2()
 		{
 			lock(this)
 			{
-				calccount++;
+				if (++calccount >= 1000)
+				{
+					calccount = 0;
+				}
 				double duration = 0;
 				double distance = 0;
 
@@ -83,7 +90,48 @@ namespace LegendDrive.Counters
 						samples.RemoveFirst();
 					}
 				}
+				lastTick = Environment.TickCount;
+				var value = duration > 0 ? distance / duration : 0;
+				return value;
+			}
+		}
 
+		protected override double Calculate()
+		{
+			lock (this)
+			{
+				if (++calccount >= 1000)
+				{
+					calccount = 0;
+				}
+				double duration = 0;
+				double distance = 0;
+
+				//going from last to first
+				var node = samples.Last;
+				var now = DateTime.Now.ToUniversalTime();
+				var t1 = now;
+				//...*(v1)....*(v2)....*(v3)....now
+				//v(now-t3) == 0
+				//v(t3-t2) == v3
+				//v(t2-t1) == v2
+
+				while (duration < DurationOfCalculation && node != null)
+				{
+					var t0 = node.Value.Time;
+					var v = node.Value.Speed;
+					var dt = (long)(t1 - t0).TotalSeconds;
+					distance += v * dt;
+					duration += dt;
+					t1 = t0;
+					node = node.Previous;
+				}
+
+				while (samples.First != null && (now - samples.First.Value.Time).TotalSeconds > DurationOfCalculation)
+				{
+					samples.RemoveFirst();
+				}
+				lastTick = Environment.TickCount;
 				var value = duration > 0 ? distance / duration : 0;
 				return value;
 			}
@@ -110,6 +158,28 @@ namespace LegendDrive.Counters
 				samples.Clear();
 			}
 			Invalidate();
+		}
+
+		public void AddTrigger(string properties, INotifyPropertyChanged obj)
+		{
+			var listOfproperties = properties.Split(',').Select(x => x.Trim()).ToList();
+			triggers[obj] = listOfproperties;
+			obj.PropertyChanged += Value_PropertyChanged;
+			Invalidate();
+		}
+
+		void Value_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (!IsInitialized) return;
+			if (!triggers.ContainsKey(sender)) return;
+
+			if (triggers[sender].Contains(e.PropertyName))
+			{
+				if (Environment.TickCount - lastTick >= 2000) //refresh speed in case GPS stuck
+				{
+					Invalidate();
+				}
+			}
 		}
 	}
 }

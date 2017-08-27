@@ -53,9 +53,24 @@ namespace LegendDrive
 		{
 			if (cmd == NumpadCommands.KeyDot)
 			{
-				if (!NewDataText.Split(' ').Last().Contains('.'))
+				var data = NewDataText.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+				var last = data.LastOrDefault() ?? string.Empty;
+				if (data.Count() <= 2)
 				{
-					NewDataText += ".";
+					if (!last.Contains('.'))
+					{
+						NewDataText += ".";
+					}
+				}
+				else
+				{
+					if (!last.Contains(".."))
+					{
+						if (last.LastOrDefault() == '.' || !last.Contains("."))
+						{
+							NewDataText += ".";
+						}
+					}
 				}
 			}
 			else

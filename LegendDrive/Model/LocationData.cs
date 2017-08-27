@@ -50,7 +50,14 @@ namespace LegendDrive.Model
 		{
 			var time = (Nanos - to.Nanos) / 1000000000.0d;
 			var delta = (Speed + to.Speed) / 2 * time;
-			return delta;
+			if (SpeedKmh < 5)
+			{
+				return delta;
+			}
+			else
+			{
+				return DistanceTo(to);
+			}
 		}
 
 		public double DistanceTo(LocationData to)

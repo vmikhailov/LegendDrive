@@ -64,7 +64,7 @@ namespace LegendDrive.Model
 			//	speed = r.Next(10) + 15;
 			//}
 			//if (samples > 30) speed = 5;
-			//if (samples > 50) return;
+			if (samples > 50) speed = 0;
 			//speed = 8;
 
 			var k = LocationData.DistanceBetween(

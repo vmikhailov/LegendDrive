@@ -79,7 +79,7 @@ namespace LegendDrive.Model.ViewModel
 
 		private double GetFontSize(double baseSize)
 		{
-			return segment.IsCurrent? baseSize * 1.5 : baseSize;
+			return segment.IsCurrent? baseSize * 1.75 : baseSize;
 		}
 
 		public double FontSizeNo => GetFontSize(UIConfiguration.SegmentListNoFontSize);
@@ -90,11 +90,16 @@ namespace LegendDrive.Model.ViewModel
 
 		public double FontSizeTimeout => GetFontSize(UIConfiguration.SegmentListTimeoutFontSize);
 
-		public int ListItemHeight => segment.IsCurrent ? UIConfiguration.LargeButtonHeight : 32;
+		public int ListItemHeight => (int)(segment.IsCurrent ? UIConfiguration.LargeButtonHeight : 32);
 
-		public Color BackgroundColor =>
-				segment.IsCurrent ? UIConfiguration.ButtonColor : 
-		        (segment.Passed ? UIConfiguration.EnabledCounterBackground : Color.Black);
-
+		public Color BackgroundColor
+		{
+			get
+			{
+				if (segment.IsCurrent) return UIConfiguration.ButtonColor;
+				var color = segment.Passed ? UIConfiguration.EnabledCounterBackground : Color.Black;
+				return segment.No % 2 == 0 ^ segment.Passed ? color.WithLuminosity(0.05) : color;
+			}
+		}
 	}
 }
