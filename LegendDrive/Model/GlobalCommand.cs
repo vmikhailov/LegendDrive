@@ -11,7 +11,8 @@
 		DelSegment,
 		AskConfirmation,
 		ReplyConfirmation,
-		Vibrate
+		Vibrate,
+		None
 	}
 
 	public enum RaceEventTypes
@@ -75,6 +76,7 @@
 		public static GlobalCommand GPSReset { get; } = new GlobalCommand(GlobalCommandCodes.GPSReset);
 
 		public static GlobalCommand Turn { get; } = new GlobalCommand(GlobalCommandCodes.Turn);
+		public static GlobalCommand None { get; } = new GlobalCommand(GlobalCommandCodes.None);
 		public static GlobalCommand DelSegment { get; } = new GlobalCommand(GlobalCommandCodes.DelSegment);
 		public static GlobalCommand AskConfirmation(GlobalCommand cmdToConfirm, string message)
 		{

@@ -65,7 +65,7 @@ namespace LegendDrive
 				x.SetBinding(VisualElement.IsEnabledProperty, "CanGoBack");
 			});
 
-			var dummyButton = btnFunc("", GlobalCommand.Turn).With(x =>
+			var dummyButton = btnFunc("", GlobalCommand.None).With(x =>
 			{
 				x.IsEnabled = false;
 				x.BackgroundColor = Color.Black;
