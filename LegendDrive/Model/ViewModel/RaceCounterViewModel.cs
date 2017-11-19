@@ -40,14 +40,7 @@ namespace LegendDrive.Model.ViewModel
 
 		void TapCommandHandler(object parameter)
 		{
-			if (counter.IsRunning)
-			{
-				counter.Stop();
-			}
-			else
-			{
-				counter.Start();
-			}
+            counter.OnCounterTap();
 		}
 
 		void Counter_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

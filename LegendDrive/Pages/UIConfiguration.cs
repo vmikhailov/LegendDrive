@@ -19,7 +19,7 @@ namespace LegendDrive
 		public const double SegmentListTimeoutFontSize = SegmentListNoFontSize;
 
 		public const double SegmentListNoSize = (double)(ButtonWidth * 0.5);
-		public const double SegmentListLengthSize = (double)(ButtonWidth * 1.2);
+		public const double SegmentListLengthSize = (double)(ButtonWidth * 1.3);
 		public const double SegmentListSpeedSize = (double)(ButtonWidth * 0.6);
 		public const double SegmentListTimeoutSize = (double)(ButtonWidth * 0.5);
 

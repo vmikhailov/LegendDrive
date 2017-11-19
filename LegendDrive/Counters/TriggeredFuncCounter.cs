@@ -8,16 +8,53 @@ using Newtonsoft.Json.Linq;
 
 namespace LegendDrive.Counters
 {
+  //  public class TriggeredFuncCounter<TObject, TObject2, TResult> : TriggeredFuncCounter<TObject, TResult>
+		////where TObject : INotifyPropertyChanged
+		////where TObject2 : INotifyPropertyChanged
+  //  {
+		//Func<TObject, TObject2, TResult> getter2;
+
+		//public TriggeredFuncCounter(string name)
+		//	: base(name)
+  //      {
+  //      }
+
+  //      public TriggeredFuncCounter(string name, string format)
+  //          : base(name, format)
+  //      {
+  //      }
+
+		//public TObject2 BindingContext2
+		//{
+		//	get; set;
+		//}
+
+		//public void BindTo(TObject value, TObject2 value2, Func<TObject, TObject2, TResult> getter)
+		//{
+		//	this.getter2 = getter;
+		//	this.BindingContext = value;
+		//	this.BindingContext2 = value2;
+		//	Invalidate();
+		//}
+
+		//protected override TResult Calculate()
+		//{
+		//	var value = getter2 != null ? getter2(BindingContext, BindingContext2) : base.Calculate();
+		//	return value;
+		//}
+    //}
+
+
+
 	public class TriggeredFuncCounter<TObject, TResult> :
 		BaseCalculatedCounter<TResult>,
 		ITriggeredFuncCounter<TObject, TResult>
-		where TObject : INotifyPropertyChanged
+		//where TObject : INotifyPropertyChanged
 	{
 		IDictionary<object, List<string>> triggers = new Dictionary<object, List<string>>();
 		Func<TObject, TResult> getter;
 		string format = "#,0";
 		LinkedList<TResult> approximationList = new LinkedList<TResult>();
-
 
 		public TriggeredFuncCounter(string name)
 			: base(name)
@@ -74,6 +111,7 @@ namespace LegendDrive.Counters
 			get; set;
 		}
 
+
 		private TResult GetApproximatedValue(TResult newValue)
 		{
 			approximationList.AddLast(newValue);
@@ -91,7 +129,7 @@ namespace LegendDrive.Counters
 			Invalidate();
 		}
 
-		public void AddTrigger(string properties, INotifyPropertyChanged obj)
+        public void AddTrigger(string properties, INotifyPropertyChanged obj)
 		{
 			var listOfproperties = properties.Split(',').Select(x => x.Trim()).ToList();
 			triggers[obj] = listOfproperties;
@@ -113,30 +151,18 @@ namespace LegendDrive.Counters
 		public override void Start()
 		{
 			base.Start();
-			//if (!(Name.Contains("race") || Name.Contains("Race") || Name.Contains("time") || Name.Contains("speed")))
-			//if(!Name.Contains("GPS"))
-			//{
-				Invalidate();
-			//}
+			Invalidate();
 		}
 
 		protected override void Invalidate()
 		{
 			base.Invalidate();
-			//if (AfterNewValue != null) AfterNewValue(this);
 		}
 
 		protected override TResult Calculate()
 		{
-			var value = getter(BindingContext);
-			return value;
+            return getter(BindingContext);
 		}
-
-		//public Action<ITriggeredFuncCounter<TObject, TResult>> AfterNewValue
-		//{
-		//	get;
-		//	set;
-		//}
 	}
 }
 

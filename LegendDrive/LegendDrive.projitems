@@ -62,6 +62,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Binding\DependencyHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\ViewModelObservableCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Model\ViewModel\IViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ITextToSpeech.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Model\" />

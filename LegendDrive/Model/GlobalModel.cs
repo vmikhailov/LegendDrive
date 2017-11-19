@@ -22,13 +22,17 @@ namespace LegendDrive.Model
 
 		public CountersContainer CountersGroup { get; set; }
 
-		public bool ShowDebugInfo { get; set;} 
+		public bool ShowDebugInfo { get; set;}
+
+		public ITextToSpeech Speech { get; private set; }
+		public bool UseBadLanguage { get; set; }
 
 		public GlobalModel()
 		{
 			Numpad = new NumpadModel();
 			Race = new Race();
 			Numpad.NewDataTextEntered += Race.ParseAndAddNewSegments;
+
 
 			CountersGroup = new CountersContainer(this);
 			CountersGroup.Init();
@@ -38,8 +42,19 @@ namespace LegendDrive.Model
 			MessagingHub.Subscribe<GlobalCommand>(this, QueueType.Confirmed, (cmd) => ProcessConfirmedCommand(cmd));
 			MessagingHub.Subscribe<GlobalCommand>(this, QueueType.Canceled, (cmd) => ProcessCanceledCommand(cmd));
 			MessagingHub.Subscribe<LocationData>(this, QueueType.Location, (loc) => ProcessNewLocation(loc));
+            InitSpeech();
+            UseBadLanguage = false;
 		}
 
+        public void InitSpeech()
+        {
+            Speech = DependencyService.Get<ITextToSpeech>();
+        }
+
+        public void ResetSpeech()
+        {
+            Speech = null;
+        }
 
 		private void ProcessClickCommand(GlobalCommand cmd)
 		{
@@ -65,6 +80,9 @@ namespace LegendDrive.Model
 						ResetAll();
 					}
 					break;
+                case GlobalCommandCodes.ResetTime:
+                    Race.ResetTimeOnCheckpoint();
+                    break;
 				case GlobalCommandCodes.ClearAll:
 					MessagingHub.Send(QueueType.AskConfirmation, GlobalCommand.AskConfirmation(cmd, "Delete all data?"));
 					break;
@@ -122,6 +140,7 @@ namespace LegendDrive.Model
 				MessagingHub.Send(QueueType.Race, new RaceEvent(LastLocaton, RaceEventTypes.Start));
 				MessagingHub.Send(new VibrateCommand("11"));
 			}
+            Speech?.Speak("Поехали");
 		}
 
 		public void FinishRace()
@@ -158,6 +177,7 @@ namespace LegendDrive.Model
 				MessagingHub.Send(QueueType.Race, new RaceEvent(LastLocaton, RaceEventTypes.Turn));
 				MessagingHub.Send(new VibrateCommand("1"));
 			}
+			//Speech?.Speak("Поворот");
 		}
 
 		public void GoBack()
@@ -207,9 +227,18 @@ namespace LegendDrive.Model
 			get; private set;
 		}
 
-		private void ProcessNewLocation(LocationData loc)
+        private void ProcessNewLocation(LocationData loc)
 		{
-			LastLocaton = loc;
+            if (LastLocaton != null)
+            {
+                var distance = loc.DistanceTo(LastLocaton);
+                if(distance > 1000)
+                {
+                    LastLocaton = loc;
+                    return;
+                }
+            }
+            LastLocaton = loc;
 			RaisePropertyChanged(nameof(LastLocaton));
 			CountersGroup.ProcessNewLocation(loc);
 		}

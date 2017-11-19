@@ -72,8 +72,8 @@ namespace LegendDrive.Model.ViewModel
 		{
 			get
 			{
-				var minutes = (int)segment.Timeout.TotalMinutes;
-				return (minutes == 0 ? String.Empty : minutes.ToString("g")).PadLeft(3);
+				var minutes = segment.Timeout.TotalMinutes;
+                return minutes > 0.001 ? minutes.ToString("g").PadLeft(3) : String.Empty;
 			}
 		}
 

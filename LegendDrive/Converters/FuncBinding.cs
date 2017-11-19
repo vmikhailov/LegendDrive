@@ -11,11 +11,6 @@ namespace LegendDrive
 			return Create<TValue, object, TResult>(path, (value, context) => map(value));
 		}
 
-		public static Binding Create<TValue>(Expression<Func<TValue, object>> expression)
-		{
-			return Binding.Create(expression, BindingMode.OneWay, null, null, null);
-		}
-
 		public static Binding Create<TValue, TContext, TResult>(string path, Func<TValue, TContext, TResult> map, TContext parameter = default(TContext))
 		{
 			return new Binding(path, BindingMode.OneWay, new FuncValueConverter<TValue, TContext, TResult>(map), parameter, null, null);

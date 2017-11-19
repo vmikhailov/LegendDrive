@@ -14,7 +14,7 @@ namespace LegendDrive
 {
 	public class LeftPanelBuilder : BaseBindingObject<LeftPanelBuilder>, IViewBuilder
 	{
-		GlobalModel model;
+        GlobalModel model;
 		public LeftPanelBuilder(GlobalModel model)
 		{
 			this.model = model;
@@ -27,7 +27,7 @@ namespace LegendDrive
 
 		private View BuildLeftPanel()
 		{
-			var normalCommand = new Command((param) => { MessagingHub.Send(QueueType.Click, (GlobalCommand)param); });
+            var cmd = new Command((param) => { MessagingHub.Send(QueueType.Click, (GlobalCommand)param); });
 
 			var btnFunc = new Func<string, GlobalCommand, Button>((text, cmdCode) =>
 			{
@@ -44,16 +44,41 @@ namespace LegendDrive
 					TextColor = UIConfiguration.CounterColors[CounterColor.White],
 					CommandParameter = cmdCode,
 				};
-				btn.Command = normalCommand;
+				btn.Command = cmd;
 				return btn;
 			});
 
+
+            var speechSwitcher = new Switch
+            {
+                HorizontalOptions = LayoutOptions.CenterAndExpand,
+                VerticalOptions = LayoutOptions.CenterAndExpand,
+                BindingContext = model,
+                Margin = new Thickness(2, 0, 2, 0),
+                BackgroundColor = Color.Black,
+                IsToggled = model.Speech != null,
+                WidthRequest = UIConfiguration.LargeButtonWidth / 2,
+			};
+            speechSwitcher.Toggled += SpeechSwitcher_Toggled;
+
+			var badlangSwitcher = new Switch
+			{
+				HorizontalOptions = LayoutOptions.CenterAndExpand,
+				VerticalOptions = LayoutOptions.CenterAndExpand,
+				BindingContext = model,
+				Margin = new Thickness(2, 0, 2, 0),
+				BackgroundColor = Color.Black,
+				IsToggled = model.UseBadLanguage,
+				WidthRequest = UIConfiguration.LargeButtonWidth / 2,
+			};
+			badlangSwitcher.Toggled += BadlangSwitcher_Toggled;
 
 			var startFinishButton = btnFunc(null, GlobalCommand.StartFinish);
 			startFinishButton.SetBinding(Button.TextProperty,
 										 FuncBinding.Create<bool, string>("IsRunning", x => x ? "Finish" : "Start"));
 
 			var resetButton = btnFunc("Reset", GlobalCommand.ResetAll);
+            var resetTimeButton = btnFunc("Reset time", GlobalCommand.ResetTime);
 
 			var clearButton = btnFunc("Clear", GlobalCommand.ClearAll);
 			clearButton.SetBinding(VisualElement.IsEnabledProperty, FuncBinding.Create<bool, bool>("IsRunning", x => !x));
@@ -69,6 +94,7 @@ namespace LegendDrive
 			{
 				x.IsEnabled = false;
 				x.BackgroundColor = Color.Black;
+                x.WidthRequest = UIConfiguration.LargeButtonWidth / 2;
 			});
 			                                                          
 			var turnButton = btnFunc("Turn", GlobalCommand.Turn).With(x =>
@@ -103,9 +129,9 @@ namespace LegendDrive
 				RowSpacing = 2
 			}.With(x =>
 			{
-				x.Children.Add(BuildButtonsPanel(startFinishButton, resetButton, clearButton, gpsButton, deleteButton), 0, 0);
+                x.Children.Add(BuildButtonsPanel(startFinishButton, resetButton, resetTimeButton, clearButton, gpsButton, deleteButton), 0, 0);
 				x.Children.Add(new CountersPanelBuilder(model).Build(), 0, 1);
-				x.Children.Add(BuildButtonsPanel(dummyButton, turnButton, backButton), 0, 2);
+                x.Children.Add(BuildButtonsPanel(badlangSwitcher, speechSwitcher, turnButton, backButton), 0, 2);
 			});
 			return grid;
 		}
@@ -124,6 +150,27 @@ namespace LegendDrive
 			grid.ColumnSpacing = 0;
 			grid.RowSpacing = -2;
 			return grid;
+        }
+
+		void SpeechSwitcher_Toggled(object sender, ToggledEventArgs e)
+		{
+            var sw = (Switch)sender;
+            var m = (GlobalModel)sw.BindingContext;
+            if(e.Value)
+            {
+                m.InitSpeech();
+            }
+            else
+            {
+                m.ResetSpeech();   
+            }
+		}
+
+		void BadlangSwitcher_Toggled(object sender, ToggledEventArgs e)
+		{
+			var sw = (Switch)sender;
+			var m = (GlobalModel)sw.BindingContext;
+            m.UseBadLanguage = e.Value;
 		}
 	}
 }

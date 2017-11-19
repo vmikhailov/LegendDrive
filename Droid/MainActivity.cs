@@ -8,11 +8,10 @@ using LegendDrive.Droid.Services;
 namespace LegendDrive.Droid
 {
 	[Activity(Label = "Legend Drive", Icon = "@drawable/icon", 
-	         // Theme = "@style/MyTheme",
+	          Theme = "@style/MyTheme",
 	          MainLauncher = false, 
 	          ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
 	public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
-	//global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
 	{
 		LocationService _locationService;
 		VibrationService _vibrationService;

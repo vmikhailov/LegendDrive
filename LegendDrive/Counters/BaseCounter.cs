@@ -80,6 +80,27 @@ namespace LegendDrive.Counters
 			timer = new Timer(TurnOffFlash, this, msec, 0);
 		}
 
+        public virtual Action<IRaceCounter> CustomTapHandler { get; set; }
+
+        public virtual void OnCounterTap()
+        {
+            if (CustomTapHandler != null)
+            {
+                CustomTapHandler(this);
+            }
+            else
+            {
+                if (IsRunning)
+                {
+                    Stop();
+                }
+                else
+                {
+                    Start();
+                }
+            }
+        }
+
 		private void TurnOffFlash(object state)
 		{
 			SetCritical(false);

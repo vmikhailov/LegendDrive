@@ -11,17 +11,17 @@ using Xamarin.Forms.Platform.Android;
 namespace LegendDrive.Droid
 {
 	[Activity(Theme = "@style/MyTheme", MainLauncher = true, NoHistory = true)]
-	public class SplashActivity : AppCompatActivity
+	public class SplashActivity : Activity
 	{
 		static readonly string TAG = "X:" + typeof(SplashActivity).Name;
 
 		protected override void OnCreate(Bundle savedInstanceState)
 		{
-			//RequestWindowFeature(WindowFeatures.NoTitle);
-			//RequestWindowFeature(WindowFeatures.ActionBar);
+			RequestWindowFeature(WindowFeatures.NoTitle);
+			RequestWindowFeature(WindowFeatures.ActionBar);
 			base.OnCreate(savedInstanceState);
 
-			SetContentView(Resource.Layout.Splash2);
+            SetContentView(Resource.Layout.Splash2);
 			Log.Debug(TAG, "SplashActivity.OnCreate");
 		}
 
@@ -32,7 +32,7 @@ namespace LegendDrive.Droid
 			var startupWork = new Task(() =>
 			{
 				Log.Debug(TAG, "*");
-				Thread.Sleep(1000);
+				Thread.Sleep(500);
 			});
 
 			startupWork.ContinueWith(t =>

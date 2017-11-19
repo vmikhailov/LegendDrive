@@ -4,7 +4,8 @@
 	{
 		StartFinish,
 		ClearAll,
-		ResetAll,
+        ResetAll,
+        ResetTime,
 		Back,
 		GPSReset,
 		Turn,
@@ -71,7 +72,8 @@
 	{
 		public static GlobalCommand StartFinish { get; } = new GlobalCommand(GlobalCommandCodes.StartFinish);
 		public static GlobalCommand ClearAll { get; } = new GlobalCommand(GlobalCommandCodes.ClearAll);
-		public static GlobalCommand ResetAll { get; } = new GlobalCommand(GlobalCommandCodes.ResetAll);
+        public static GlobalCommand ResetAll { get; } = new GlobalCommand(GlobalCommandCodes.ResetAll);
+		public static GlobalCommand ResetTime { get; } = new GlobalCommand(GlobalCommandCodes.ResetTime);
 		public static GlobalCommand Back { get; } = new GlobalCommand(GlobalCommandCodes.Back);
 		public static GlobalCommand GPSReset { get; } = new GlobalCommand(GlobalCommandCodes.GPSReset);
 

@@ -24,8 +24,10 @@ namespace LegendDrive.Model
 
 			prevLoc = new LocationData()
 			{
-				Latitude = 50 + r.Next(200) / 1000000.0,
-				Longitude = 30 + r.Next(200) / 1000000.0,
+                //Latitude = 50 + r.Next(200) / 1000000.0,
+				Latitude = 50 + 100 / 1000000.0,
+                //Longitude = 30 + r.Next(200) / 1000000.0,
+				Longitude = 30
 			};
 
 			var rspeed = model.CountersGroup.All
@@ -53,7 +55,8 @@ namespace LegendDrive.Model
 			var targetSpeed = rspeed?.Value;
 			targetSpeed = targetSpeed > 80 ? 80 : targetSpeed;
 			var delta = Math.Round(Math.Abs(targetSpeed.GetValueOrDefault() - speed),0);
-			speed += targetSpeed > (speed + delta/2) ? delta/2 : (targetSpeed < (speed - delta/2) ? -delta/2: 0);
+            //speed += targetSpeed > (speed + delta/2) ? delta/2 : (targetSpeed < (speed - delta/2) ? -delta/2: 0);
+            speed = 10;
 			//if (speed.HasValue)
 			//{
 			//	speed = speed > 80 ? 80 : speed;

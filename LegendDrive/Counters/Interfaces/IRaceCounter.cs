@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 
 namespace LegendDrive.Counters.Interfaces
 {
@@ -24,12 +25,20 @@ namespace LegendDrive.Counters.Interfaces
 		CounterSize Size { get; set; }
 
 		void Init();
+        void OnCounterTap();
+        Action<IRaceCounter> CustomTapHandler { get; set; }
 	}
 
 	public interface IRaceCounter<T> : IRaceCounter
 	{
 		T Value { get; }
 	}
+
+    public interface ISupportSubscription<T>
+    {
+        void Subscribe(string property, Action<T> action);
+        void UnSubscribe(string property, Action<T> action);
+    }
 
 
 	public enum CounterColor

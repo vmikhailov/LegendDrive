@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define SYM
+
+using System;
 using System.IO;
 using System.Threading;
 using Android.Util;
@@ -9,19 +11,21 @@ using Xamarin.Forms;
 
 namespace LegendDrive
 {
-	public partial class App : Application
-	{
-		GlobalModel model;
-		Simulator simulator; 
-		 
-		public App()
-		{
-			model = new GlobalModel();
-			MainPage = new RaceMainPage(model);
-
-			simulator = new Simulator(model);
-			simulator.Start();
-		}
+    public partial class App : Application
+    {
+        GlobalModel model;
+#if SYM
+        Simulator simulator; 
+#endif
+        public App()
+        {
+            model = new GlobalModel();
+            MainPage = new RaceMainPage(model);
+#if SYM
+            simulator = new Simulator(model);
+            simulator.Start();
+#endif
+        }
 
 		protected override void OnStart()
 		{

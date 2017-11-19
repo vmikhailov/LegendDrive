@@ -23,6 +23,11 @@ namespace LegendDrive.Model.RaceModel
 			get; set;
 		}
 
+        public double PassedDistance
+        {
+            get; set;
+        }
+
 		public double Speed
 		{
 			get; set;
@@ -32,6 +37,10 @@ namespace LegendDrive.Model.RaceModel
 		{
 			get
 			{
+                if(Speed == 0)
+                {
+                    return new TimeSpan();
+                }
 				var rideTime = TimeSpan.FromHours(Length / 1000 / Speed);
 				return rideTime > Timeout ? rideTime : Timeout;
 			}
@@ -54,6 +63,12 @@ namespace LegendDrive.Model.RaceModel
 				if (_isCurrent != value)
 				{
 					_isCurrent = value;
+                    if(_isCurrent)
+                    {
+                        //entering new segment
+                        PassedDistance = 0;
+                    }
+
 					RaisePropertyChanged(nameof(IsCurrent));
 				}
 			}

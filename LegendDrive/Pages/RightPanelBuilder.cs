@@ -83,7 +83,7 @@ namespace LegendDrive
 
 					var stack = new StackLayout
 					{
-						Padding = new Thickness(2, 0),
+						Padding = new Thickness(1, 0),
 						Spacing = 0,
 						Orientation = StackOrientation.Horizontal,
 						Children =
